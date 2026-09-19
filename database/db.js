@@ -23,11 +23,17 @@ function initSchema() {
     try {
         if (fs.existsSync(schemaPath)) {
             const schemaSql = fs.readFileSync(schemaPath, 'utf8');
-            db.exec(schemaSql, (err) => {
+            db.exec(schemaSql, async (err) => {
                 if (err) {
                     console.error('خطأ أثناء تهيئة المخطط الهيكلي:', err.message);
                 } else {
                     console.log('تم التحقق من جداول قاعدة البيانات وجاهزيتها.');
+                    try {
+                        const seed = require('./seed');
+                        await seed();
+                    } catch (seedErr) {
+                        console.error('ملاحظة في زراعة البيانات الأولية:', seedErr.message);
+                    }
                 }
             });
         }

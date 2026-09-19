@@ -11,6 +11,9 @@
 </head>
 <body class="admin-body">
 
+    <!-- Mobile Sidebar Backdrop Overlay -->
+    <div class="admin-sidebar-overlay" id="admin-sidebar-overlay"></div>
+
     <!-- Sidebar -->
     <aside class="admin-sidebar" id="admin-sidebar">
         <div class="sidebar-brand">
@@ -18,6 +21,7 @@
                 <span>خدماتك الرقمية</span>
                 <span class="brand-dot"></span>
             </span>
+            <button class="sidebar-close-btn" id="admin-sidebar-close" aria-label="إغلاق القائمة">✕</button>
         </div>
 
         <ul class="sidebar-menu">
@@ -83,7 +87,12 @@
     <!-- Main Content Area -->
     <main class="admin-main">
         <header class="admin-topbar">
-            <div class="topbar-title-wrap">
+            <div class="topbar-title-wrap" style="display: flex; align-items: center; gap: 0.75rem;">
+                <button class="admin-menu-toggle" id="admin-sidebar-toggle" aria-label="فتح القائمة الجانبية">
+                    <svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                    </svg>
+                </button>
                 <h1 id="admin-page-title">نظرة عامة</h1>
             </div>
             <div class="topbar-actions">
@@ -138,15 +147,58 @@
                             <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
                         </div>
                     </div>
+
+                    <div class="stat-card">
+                        <div class="stat-info">
+                            <span>رسائل التواصل</span>
+                            <h3 id="stat-unread-messages">0</h3>
+                        </div>
+                        <div class="stat-icon-wrapper yellow">
+                            <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-info">
+                            <span>مشاريع المعرض</span>
+                            <h3 id="stat-portfolio-count">0</h3>
+                        </div>
+                        <div class="stat-icon-wrapper blue">
+                            <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-info">
+                            <span>مقالات المدونة</span>
+                            <h3 id="stat-blog-count">0</h3>
+                        </div>
+                        <div class="stat-icon-wrapper purple">
+                            <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"></path></svg>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="admin-card-box">
-                    <div class="card-box-header">
+                    <div class="card-box-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
                         <h3 style="font-size: 1.1rem; margin: 0;">أحدث الطلبات المسجلة</h3>
                     </div>
-                    <p style="color: #64748b; font-size: 0.88rem;">
-                        توجه إلى تبويب "طلبات العملاء" في القائمة الجانبية لإدارة الحالات وتدوين الملاحظات والتواصل مع العملاء.
-                    </p>
+                    <div class="admin-table-responsive">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>رقم الطلب</th>
+                                    <th>اسم العميل</th>
+                                    <th>الخدمة</th>
+                                    <th>الحالة</th>
+                                    <th>الإجراء</th>
+                                </tr>
+                            </thead>
+                            <tbody id="overview-orders-table-body">
+                                <tr><td colspan="5" style="text-align: center; padding: 1.5rem;">جاري التحميل...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
 
