@@ -1,6 +1,16 @@
 // =========================================================================
-// منطق لوحة تحكم الإدارة (Admin Dashboard SPA Logic)
+// منطق لوحة تحكم الإدارة الشاملة (Complete Admin Dashboard Logic)
 // =========================================================================
+
+// الذاكرة المؤقتة للبيانات
+let currentOrders = [];
+let currentServices = [];
+let currentPortfolio = [];
+let currentPricing = [];
+let currentBlogPosts = [];
+let currentFaqs = [];
+let currentMessages = [];
+let activeOrderId = null;
 
 document.addEventListener('DOMContentLoaded', () => {
     initMobileSidebar();
@@ -9,13 +19,16 @@ document.addEventListener('DOMContentLoaded', () => {
     loadOrders();
     loadServices();
     loadPortfolio();
+    loadPricing();
     loadBlogPosts();
+    loadFaqs();
     loadMessages();
     loadSettings();
+    loadAdminProfile();
     initGuideAccordion();
 });
 
-// 1. التحكم بالقائمة الجانبية في الهواتف والشاشات الصغيرة
+// 1. التحكم بالقائمة الجانبية في الهواتف
 function initMobileSidebar() {
     const toggleBtn = document.getElementById('admin-sidebar-toggle');
     const closeBtn = document.getElementById('admin-sidebar-close');
@@ -45,13 +58,8 @@ function initMobileSidebar() {
         });
     }
 
-    if (closeBtn) {
-        closeBtn.addEventListener('click', closeSidebar);
-    }
-
-    if (overlay) {
-        overlay.addEventListener('click', closeSidebar);
-    }
+    if (closeBtn) closeBtn.addEventListener('click', closeSidebar);
+    if (overlay) overlay.addEventListener('click', closeSidebar);
 }
 
 // 2. التبديل بين أقسام لوحة التحكم (Tabs)
@@ -72,7 +80,7 @@ function initAdminTabs() {
 
             tabPanes.forEach(pane => {
                 pane.classList.remove('active');
-                if (pane.id === `tab-${targetTab}`) {
+                if (pane.id === ('tab-' + targetTab)) {
                     pane.classList.add('active');
                 }
             });
@@ -82,14 +90,14 @@ function initAdminTabs() {
                 pageTitle.textContent = labelSpan ? labelSpan.textContent.trim() : btn.textContent.trim();
             }
 
-            // إغلاق القائمة الجانبية على الهواتف عند اختيار تبويب
+            // إغلاق القائمة على الهواتف
             if (window.innerWidth <= 900) {
                 if (sidebar) sidebar.classList.remove('active');
                 if (overlay) overlay.classList.remove('active');
                 document.body.style.overflow = '';
             }
 
-            // تحديث البيانات حسب التبويب النشط
+            // تحميل بيانات التبويب
             if (targetTab === 'overview') {
                 loadDashboardStats();
                 loadOrders();
@@ -99,26 +107,30 @@ function initAdminTabs() {
                 loadServices();
             } else if (targetTab === 'portfolio') {
                 loadPortfolio();
+            } else if (targetTab === 'pricing') {
+                loadPricing();
             } else if (targetTab === 'blog') {
                 loadBlogPosts();
+            } else if (targetTab === 'faq') {
+                loadFaqs();
             } else if (targetTab === 'messages') {
                 loadMessages();
             } else if (targetTab === 'settings') {
                 loadSettings();
+            } else if (targetTab === 'profile') {
+                loadAdminProfile();
             }
         });
     });
 }
 
-// 3. إغلاق النوافذ المنبثقة (Modals)
+// 3. إغلاق النوافذ المنبثقة
 window.closeModal = function(modalId) {
     const modal = document.getElementById(modalId);
-    if (modal) {
-        modal.classList.remove('active');
-    }
+    if (modal) modal.classList.remove('active');
 };
 
-// 4. تحميل إحصائيات لوحة التحكم الحقيقية
+// 4. تحميل إحصائيات لوحة التحكم
 async function loadDashboardStats() {
     try {
         const res = await fetch('/api/stats');
@@ -143,7 +155,6 @@ async function loadDashboardStats() {
             if (elPortfolio) elPortfolio.textContent = s.portfolio_count || 0;
             if (elBlog) elBlog.textContent = s.blog_count || 0;
 
-            // تحديث الشارات في القائمة الجانبية
             const newBadge = document.getElementById('badge-new-orders');
             if (newBadge) {
                 newBadge.textContent = s.new_orders || 0;
@@ -161,8 +172,9 @@ async function loadDashboardStats() {
     }
 }
 
-// 5. إدارة الطلبات (Orders Management)
-let currentOrders = [];
+// =========================================================================
+// 5. نظام الطلبات الحقيقي (Orders Management & Export & Print)
+// =========================================================================
 
 async function loadOrders() {
     const tableBody = document.getElementById('orders-table-body');
@@ -276,17 +288,48 @@ window.filterOrders = function() {
             (order.customer_phone || '').toLowerCase().includes(query) ||
             (order.service_name || '').toLowerCase().includes(query)
         );
-
         const matchesStatus = statusFilter === 'all' || order.status === statusFilter;
-
         return matchesQuery && matchesStatus;
     });
 
     renderOrders(filtered);
 };
 
-// فتح نافذة تفاصيل وتعديل الطلب
-let activeOrderId = null;
+// تصدير الطلبات إلى ملف Excel (CSV مع UTF-8 BOM)
+window.exportOrdersToCSV = function() {
+    if (currentOrders.length === 0) {
+        alert('لا توجد طلبات مسجلة للتصدير.');
+        return;
+    }
+
+    const headers = ['رقم الطلب', 'اسم العميل', 'رقم الهاتف', 'البريد الإلكتروني', 'الخدمة المطلوبة', 'الميزانية', 'موعد التسليم', 'الحالة', 'تاريخ الطلب', 'تفاصيل المشروع', 'ملاحظات الإدارة'];
+    const rows = currentOrders.map(o => [
+        `"${(o.order_number || '').replace(/"/g, '""')}"`,
+        `"${(o.customer_name || '').replace(/"/g, '""')}"`,
+        `"${(o.customer_phone || '').replace(/"/g, '""')}"`,
+        `"${(o.customer_email || '').replace(/"/g, '""')}"`,
+        `"${(o.service_name || '').replace(/"/g, '""')}"`,
+        `"${(o.estimated_budget || '').replace(/"/g, '""')}"`,
+        `"${(o.required_date || '').replace(/"/g, '""')}"`,
+        `"${(o.status || '').replace(/"/g, '""')}"`,
+        `"${new Date(o.created_at).toLocaleString('ar-EG')}"`,
+        `"${(o.project_details || '').replace(/"/g, '""')}"`,
+        `"${(o.internal_notes || '').replace(/"/g, '""')}"`
+    ]);
+
+    const csvContent = '\uFEFF' + headers.join(',') + '\n' + rows.map(r => r.join(',')).join('\n');
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `orders_export_${new Date().toISOString().slice(0, 10)}.csv`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+};
+
+// فتح تفاصيل الطلب
 window.openOrderModal = function(orderId) {
     const order = currentOrders.find(o => o.id === orderId);
     if (!order) return;
@@ -318,7 +361,7 @@ window.openOrderModal = function(orderId) {
                 const files = JSON.parse(order.attachments);
                 if (Array.isArray(files) && files.length > 0) {
                     attachmentWrap.innerHTML = files.map(f => {
-                        const isImg = /.(jpg|jpeg|png|webp|svg|gif)$/i.test(f);
+                        const isImg = /\.(jpg|jpeg|png|webp|svg|gif)$/i.test(f);
                         if (isImg) {
                             return `
                                 <div style="margin-top: 8px; padding: 8px; background: #ffffff; border: 1px solid #cbd5e1; border-radius: 8px;">
@@ -340,24 +383,43 @@ window.openOrderModal = function(orderId) {
         }
     }
 
-    // الحالة والملاحظات
     const statusSelect = document.getElementById('modal-order-status-select');
     const internalNotes = document.getElementById('modal-order-internal-notes');
     if (statusSelect) statusSelect.value = order.status;
     if (internalNotes) internalNotes.value = order.internal_notes || '';
 
-    // زر الواتساب المباشر
     const cleanPhone = (order.customer_phone || '').replace(/[^0-9]/g, '');
     const waBtn = document.getElementById('modal-detail-wa-btn');
     if (waBtn) {
-        waBtn.href = `https://wa.me/${cleanPhone}?text=${encodeURIComponent(`مرحبًا ${order.customer_name}، بخصوص طلبك (${order.order_number}) لخدمة ${order.service_name}:`)}`;
+        waBtn.href = 'https://wa.me/' + cleanPhone + '?text=' + encodeURIComponent('مرحبًا ' + order.customer_name + '، بخصوص طلبك (' + order.order_number + ') لخدمة ' + order.service_name + ':');
     }
 
     const modal = document.getElementById('order-detail-modal');
     if (modal) modal.classList.add('active');
 };
 
-// حفظ تحديثات الطلب
+// طباعة فاتورة الطلب
+window.printOrderInvoice = function() {
+    const order = currentOrders.find(o => o.id === activeOrderId);
+    if (!order) return;
+
+    document.getElementById('invoice-order-number').textContent = order.order_number;
+    document.getElementById('invoice-order-date').textContent = new Date(order.created_at).toLocaleString('ar-EG');
+    document.getElementById('invoice-customer-name').textContent = order.customer_name;
+    document.getElementById('invoice-customer-phone').textContent = order.customer_phone;
+    document.getElementById('invoice-customer-email').textContent = order.customer_email || 'غير متوفر';
+    document.getElementById('invoice-service-name').textContent = order.service_name;
+    document.getElementById('invoice-budget').textContent = order.estimated_budget || 'غير محدد';
+    document.getElementById('invoice-delivery-date').textContent = order.required_date || 'غير محدد';
+    document.getElementById('invoice-project-details').textContent = order.project_details || 'لا توجد تفاصيل إضافية.';
+    document.getElementById('invoice-status').textContent = order.status;
+
+    window.closeModal('order-detail-modal');
+    const invoiceModal = document.getElementById('order-invoice-modal');
+    if (invoiceModal) invoiceModal.classList.add('active');
+};
+
+// حفظ تعديلات الطلب
 window.saveOrderChanges = async function() {
     if (!activeOrderId) return;
 
@@ -381,11 +443,14 @@ window.saveOrderChanges = async function() {
             alert(result.message || 'تعذر حفظ التعديلات.');
         }
     } catch (err) {
-        alert('حدث خطأ أثناء الاتصال بالخادم لحفظ التعديلات.');
+        alert('حدث خطأ أثناء حفظ التعديلات.');
     }
 };
 
-// 6. إدارة الخدمات (Services)
+// =========================================================================
+// 6. إدارة الخدمات (Services CRUD)
+// =========================================================================
+
 async function loadServices() {
     const listWrap = document.getElementById('admin-services-list');
     if (!listWrap) return;
@@ -394,23 +459,128 @@ async function loadServices() {
         const res = await fetch('/api/services');
         const data = await res.json();
         if (data.success && Array.isArray(data.services)) {
-            listWrap.innerHTML = data.services.map(s => `
-                <div class="stat-card" style="display: block; margin-bottom: 1rem; border-right: 4px solid #0284c7;">
-                    <div style="display: flex; justify-content: space-between; align-items: center;">
-                        <h4 style="margin: 0; font-size: 1.1rem; color: #0284c7;">${escapeHtml(s.title)}</h4>
-                        <span style="font-size: 0.85rem; color: #16a34a; font-weight: 700;">${escapeHtml(s.starting_price)}</span>
+            currentServices = data.services;
+            if (currentServices.length === 0) {
+                listWrap.innerHTML = `<p style="color: #64748b; text-align: center; grid-column: 1/-1; padding: 2rem;">لا توجد خدمات معروضة حالياً.</p>`;
+                return;
+            }
+
+            listWrap.innerHTML = currentServices.map(s => {
+                let featuresArr = [];
+                try { featuresArr = JSON.parse(s.features); } catch(e){}
+                const featuresHtml = Array.isArray(featuresArr) ? featuresArr.map(f => `<li style="font-size: 0.8rem; color: #475569;">• ${escapeHtml(f)}</li>`).join('') : '';
+
+                return `
+                    <div class="stat-card" style="display: flex; flex-direction: column; justify-content: space-between; border-top: 4px solid #0284c7;">
+                        <div>
+                            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.5rem;">
+                                <h4 style="margin: 0; font-size: 1.1rem; color: #0f172a;">${escapeHtml(s.title)}</h4>
+                                <span style="font-size: 0.85rem; color: #16a34a; font-weight: 700; background: #f0fdf4; padding: 0.2rem 0.5rem; border-radius: 4px;">${escapeHtml(s.starting_price)}</span>
+                            </div>
+                            <p style="font-size: 0.85rem; color: #64748b; margin: 0.4rem 0 0.75rem 0; line-height: 1.5;">${escapeHtml(s.short_description)}</p>
+                            <ul style="list-style: none; padding: 0; margin: 0 0 1rem 0; display: flex; flex-direction: column; gap: 0.25rem;">
+                                ${featuresHtml}
+                            </ul>
+                        </div>
+                        <div style="display: flex; gap: 0.5rem; justify-content: flex-end; border-top: 1px solid #f1f5f9; padding-top: 0.75rem;">
+                            <button class="btn btn-secondary btn-sm" onclick="openServiceModal(${s.id})">✏️ تعديل</button>
+                            <button class="btn btn-secondary btn-sm" style="color: #ef4444;" onclick="deleteService(${s.id})">🗑️ حذف</button>
+                        </div>
                     </div>
-                    <p style="font-size: 0.85rem; color: #475569; margin: 0.5rem 0;">${escapeHtml(s.short_description)}</p>
-                    <div style="font-size: 0.8rem; color: #64748b;">المسار: /services/${escapeHtml(s.slug)}</div>
-                </div>
-            `).join('');
+                `;
+            }).join('');
         }
     } catch(e) {
         console.error('خطأ تحميل الخدمات:', e);
     }
 }
 
-// 7. إدارة معرض الأعمال (Portfolio)
+window.openServiceModal = function(serviceId) {
+    const titleEl = document.getElementById('service-modal-title');
+    const idEl = document.getElementById('service-form-id');
+    const formTitle = document.getElementById('service-form-title');
+    const formPrice = document.getElementById('service-form-price');
+    const formShort = document.getElementById('service-form-short');
+    const formFull = document.getElementById('service-form-full');
+    const formFeatures = document.getElementById('service-form-features');
+
+    if (serviceId) {
+        const service = currentServices.find(s => s.id === serviceId);
+        if (!service) return;
+        if (titleEl) titleEl.textContent = 'تعديل الخدمة';
+        if (idEl) idEl.value = service.id;
+        if (formTitle) formTitle.value = service.title;
+        if (formPrice) formPrice.value = service.starting_price;
+        if (formShort) formShort.value = service.short_description;
+        if (formFull) formFull.value = service.full_description || '';
+        
+        let feats = '';
+        try {
+            const arr = JSON.parse(service.features);
+            if (Array.isArray(arr)) feats = arr.join('\n');
+        } catch(e) {}
+        if (formFeatures) formFeatures.value = feats;
+    } else {
+        if (titleEl) titleEl.textContent = 'إضافة خدمة جديدة';
+        document.getElementById('service-form')?.reset();
+        if (idEl) idEl.value = '';
+    }
+
+    const modal = document.getElementById('service-modal');
+    if (modal) modal.classList.add('active');
+};
+
+window.saveServiceForm = async function(e) {
+    if (e) e.preventDefault();
+    const serviceId = document.getElementById('service-form-id')?.value;
+    const title = document.getElementById('service-form-title')?.value.trim();
+    const starting_price = document.getElementById('service-form-price')?.value.trim();
+    const short_description = document.getElementById('service-form-short')?.value.trim();
+    const full_description = document.getElementById('service-form-full')?.value.trim();
+    const features = document.getElementById('service-form-features')?.value.trim();
+
+    const payload = { title, starting_price, short_description, full_description, features };
+    const method = serviceId ? 'PUT' : 'POST';
+    const endpoint = serviceId ? `/api/services/${serviceId}` : '/api/services';
+
+    try {
+        const res = await fetch(endpoint, {
+            method,
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+        const result = await res.json();
+        if (result.success) {
+            alert(serviceId ? 'تم تحديث الخدمة بنجاح.' : 'تم إضافة الخدمة بنجاح.');
+            window.closeModal('service-modal');
+            loadServices();
+        } else {
+            alert(result.message || 'فشلت العملية.');
+        }
+    } catch(err) {
+        alert('حدث خطأ أثناء حفظ الخدمة.');
+    }
+};
+
+window.deleteService = async function(id) {
+    if (!confirm('هل أنت متأكد من حذف هذه الخدمة من الموقع؟')) return;
+    try {
+        const res = await fetch(`/api/services/${id}`, { method: 'DELETE' });
+        const result = await res.json();
+        if (result.success) {
+            loadServices();
+        } else {
+            alert(result.message || 'فشل حذف الخدمة.');
+        }
+    } catch(e) {
+        alert('خطأ أثناء الحذف.');
+    }
+};
+
+// =========================================================================
+// 7. إدارة معرض الأعمال (Portfolio CRUD)
+// =========================================================================
+
 async function loadPortfolio() {
     const listWrap = document.getElementById('admin-portfolio-list');
     if (!listWrap) return;
@@ -419,18 +589,28 @@ async function loadPortfolio() {
         const res = await fetch('/api/portfolio');
         const data = await res.json();
         if (data.success && Array.isArray(data.items)) {
-            listWrap.innerHTML = data.items.map(p => `
-                <div class="stat-card" style="display: block; margin-bottom: 1rem; border-right: 4px solid #10b981;">
-                    <div style="display: flex; justify-content: space-between; align-items: center;">
-                        <h4 style="margin: 0; font-size: 1.05rem;">${escapeHtml(p.title)}</h4>
-                        <span class="status-badge new">${escapeHtml(p.category)}</span>
+            currentPortfolio = data.items;
+            if (currentPortfolio.length === 0) {
+                listWrap.innerHTML = `<p style="color: #64748b; text-align: center; grid-column: 1/-1; padding: 2rem;">لا توجد مشاريع مضافة حالياً.</p>`;
+                return;
+            }
+
+            listWrap.innerHTML = currentPortfolio.map(p => `
+                <div class="stat-card" style="display: flex; flex-direction: column; justify-content: space-between; border-top: 4px solid #10b981;">
+                    <div>
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                            <h4 style="margin: 0; font-size: 1.05rem; color: #0f172a;">${escapeHtml(p.title)}</h4>
+                            <span class="status-badge new">${escapeHtml(p.category)}</span>
+                        </div>
+                        <p style="font-size: 0.85rem; color: #64748b; margin: 0.5rem 0; line-height: 1.5;">${escapeHtml(p.description)}</p>
+                        <div style="font-size: 0.8rem; color: #475569; display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                            <span>العميل: ${escapeHtml(p.client_name || 'عام')}</span>
+                            ${p.live_demo_url ? `<a href="${p.live_demo_url}" target="_blank" style="color: #0284c7; text-decoration: underline;">معاينة حية ↗</a>` : ''}
+                        </div>
                     </div>
-                    <p style="font-size: 0.85rem; color: #475569; margin: 0.4rem 0;">${escapeHtml(p.description)}</p>
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 0.5rem;">
-                        <span style="font-size: 0.8rem; color: #64748b;">العميل: ${escapeHtml(p.client_name || 'عام')}</span>
-                        <button class="btn-icon delete" onclick="deletePortfolioItem(${p.id})" title="حذف المشروع">
-                            <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
-                        </button>
+                    <div style="display: flex; gap: 0.5rem; justify-content: flex-end; border-top: 1px solid #f1f5f9; padding-top: 0.75rem;">
+                        <button class="btn btn-secondary btn-sm" onclick="openPortfolioModal(${p.id})">✏️ تعديل</button>
+                        <button class="btn btn-secondary btn-sm" style="color: #ef4444;" onclick="deletePortfolioItem(${p.id})">🗑️ حذف</button>
                     </div>
                 </div>
             `).join('');
@@ -439,6 +619,80 @@ async function loadPortfolio() {
         console.error('خطأ تحميل معرض الأعمال:', e);
     }
 }
+
+window.openPortfolioModal = function(projectId) {
+    const titleEl = document.getElementById('portfolio-modal-title');
+    const idEl = document.getElementById('portfolio-form-id');
+    const fTitle = document.getElementById('portfolio-form-title');
+    const fCategory = document.getElementById('portfolio-form-category');
+    const fClient = document.getElementById('portfolio-form-client');
+    const fImg = document.getElementById('portfolio-form-image-url');
+    const fDemo = document.getElementById('portfolio-form-demo');
+    const fTech = document.getElementById('portfolio-form-tech');
+    const fDesc = document.getElementById('portfolio-form-desc');
+
+    if (projectId) {
+        const item = currentPortfolio.find(p => p.id === projectId);
+        if (!item) return;
+        if (titleEl) titleEl.textContent = 'تعديل المشروع';
+        if (idEl) idEl.value = item.id;
+        if (fTitle) fTitle.value = item.title;
+        if (fCategory) fCategory.value = item.category;
+        if (fClient) fClient.value = item.client_name || '';
+        if (fImg) fImg.value = item.cover_image || '';
+        if (fDemo) fDemo.value = item.live_demo_url || '';
+        
+        let techStr = '';
+        try {
+            const arr = JSON.parse(item.tech_stack);
+            if (Array.isArray(arr)) techStr = arr.join(', ');
+        } catch(e) {}
+        if (fTech) fTech.value = techStr;
+        if (fDesc) fDesc.value = item.description;
+    } else {
+        if (titleEl) titleEl.textContent = 'إضافة مشروع جديد';
+        document.getElementById('portfolio-form')?.reset();
+        if (idEl) idEl.value = '';
+    }
+
+    const modal = document.getElementById('portfolio-modal');
+    if (modal) modal.classList.add('active');
+};
+
+window.savePortfolioForm = async function(e) {
+    if (e) e.preventDefault();
+    const projectId = document.getElementById('portfolio-form-id')?.value;
+    const title = document.getElementById('portfolio-form-title')?.value.trim();
+    const category = document.getElementById('portfolio-form-category')?.value;
+    const client_name = document.getElementById('portfolio-form-client')?.value.trim();
+    const cover_image_url = document.getElementById('portfolio-form-image-url')?.value.trim();
+    const live_demo_url = document.getElementById('portfolio-form-demo')?.value.trim();
+    const tech_stack = document.getElementById('portfolio-form-tech')?.value.trim();
+    const description = document.getElementById('portfolio-form-desc')?.value.trim();
+
+    const payload = { title, category, client_name, cover_image_url, live_demo_url, tech_stack, description };
+    const method = projectId ? 'PUT' : 'POST';
+    const endpoint = projectId ? `/api/portfolio/${projectId}` : '/api/portfolio';
+
+    try {
+        const res = await fetch(endpoint, {
+            method,
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+        const result = await res.json();
+        if (result.success) {
+            alert(projectId ? 'تم تحديث المشروع بنجاح.' : 'تم إضافة المشروع بنجاح.');
+            window.closeModal('portfolio-modal');
+            loadPortfolio();
+            loadDashboardStats();
+        } else {
+            alert(result.message || 'فشلت العملية.');
+        }
+    } catch(err) {
+        alert('حدث خطأ أثناء حفظ المشروع.');
+    }
+};
 
 window.deletePortfolioItem = async function(id) {
     if (!confirm('هل أنت متأكد من حذف هذا المشروع من معرض الأعمال؟')) return;
@@ -452,11 +706,148 @@ window.deletePortfolioItem = async function(id) {
             alert(result.message || 'فشل حذف المشروع.');
         }
     } catch(e) {
-        alert('خطأ في الاتصال بالخادم.');
+        alert('خطأ أثناء الحذف.');
     }
 };
 
-// 8. إدارة المدونة (Blog Posts)
+// =========================================================================
+// 8. إدارة باقات الأسعار (Pricing Plans CRUD)
+// =========================================================================
+
+async function loadPricing() {
+    const listWrap = document.getElementById('admin-pricing-list');
+    if (!listWrap) return;
+
+    try {
+        const res = await fetch('/api/pricing');
+        const data = await res.json();
+        if (data.success && Array.isArray(data.plans)) {
+            currentPricing = data.plans;
+            if (currentPricing.length === 0) {
+                listWrap.innerHTML = `<p style="color: #64748b; text-align: center; grid-column: 1/-1; padding: 2rem;">لا توجد باقات أسعار مسجلة حالياً.</p>`;
+                return;
+            }
+
+            listWrap.innerHTML = currentPricing.map(plan => {
+                let featuresArr = [];
+                try { featuresArr = JSON.parse(plan.features); } catch(e){}
+                const featuresHtml = Array.isArray(featuresArr) ? featuresArr.map(f => `<li style="font-size: 0.8rem; color: #475569;">✓ ${escapeHtml(f)}</li>`).join('') : '';
+
+                return `
+                    <div class="stat-card" style="display: flex; flex-direction: column; justify-content: space-between; border-top: 4px solid #f59e0b;">
+                        <div>
+                            <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                                <h4 style="margin: 0; font-size: 1.1rem; color: #0f172a;">${escapeHtml(plan.name)}</h4>
+                                ${plan.badge ? `<span class="status-badge waiting">${escapeHtml(plan.badge)}</span>` : ''}
+                            </div>
+                            <div style="font-size: 1.25rem; font-weight: 800; color: #0284c7; margin: 0.5rem 0;">${escapeHtml(plan.starting_price)} <span style="font-size: 0.75rem; color: #64748b; font-weight: 500;">/ ${escapeHtml(plan.period || 'تدفع مرة واحدة')}</span></div>
+                            <p style="font-size: 0.85rem; color: #64748b; margin-bottom: 0.75rem;">${escapeHtml(plan.description)}</p>
+                            <ul style="list-style: none; padding: 0; margin: 0 0 1rem 0; display: flex; flex-direction: column; gap: 0.25rem;">
+                                ${featuresHtml}
+                            </ul>
+                        </div>
+                        <div style="display: flex; gap: 0.5rem; justify-content: flex-end; border-top: 1px solid #f1f5f9; padding-top: 0.75rem;">
+                            <button class="btn btn-secondary btn-sm" onclick="openPricingModal(${plan.id})">✏️ تعديل</button>
+                            <button class="btn btn-secondary btn-sm" style="color: #ef4444;" onclick="deletePricingPlan(${plan.id})">🗑️ حذف</button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+    } catch(e) {
+        console.error('خطأ تحميل الباقات:', e);
+    }
+}
+
+window.openPricingModal = function(planId) {
+    const titleEl = document.getElementById('pricing-modal-title');
+    const idEl = document.getElementById('pricing-form-id');
+    const fName = document.getElementById('pricing-form-name');
+    const fPrice = document.getElementById('pricing-form-price');
+    const fBadge = document.getElementById('pricing-form-badge');
+    const fPeriod = document.getElementById('pricing-form-period');
+    const fDesc = document.getElementById('pricing-form-desc');
+    const fFeatures = document.getElementById('pricing-form-features');
+
+    if (planId) {
+        const plan = currentPricing.find(p => p.id === planId);
+        if (!plan) return;
+        if (titleEl) titleEl.textContent = 'تعديل الباقة';
+        if (idEl) idEl.value = plan.id;
+        if (fName) fName.value = plan.name;
+        if (fPrice) fPrice.value = plan.starting_price;
+        if (fBadge) fBadge.value = plan.badge || '';
+        if (fPeriod) fPeriod.value = plan.period || 'تدفع مرة واحدة';
+        if (fDesc) fDesc.value = plan.description;
+        
+        let feats = '';
+        try {
+            const arr = JSON.parse(plan.features);
+            if (Array.isArray(arr)) feats = arr.join('\n');
+        } catch(e) {}
+        if (fFeatures) fFeatures.value = feats;
+    } else {
+        if (titleEl) titleEl.textContent = 'إضافة باقة جديدة';
+        document.getElementById('pricing-form')?.reset();
+        if (idEl) idEl.value = '';
+    }
+
+    const modal = document.getElementById('pricing-modal');
+    if (modal) modal.classList.add('active');
+};
+
+window.savePricingForm = async function(e) {
+    if (e) e.preventDefault();
+    const planId = document.getElementById('pricing-form-id')?.value;
+    const name = document.getElementById('pricing-form-name')?.value.trim();
+    const starting_price = document.getElementById('pricing-form-price')?.value.trim();
+    const badge = document.getElementById('pricing-form-badge')?.value.trim();
+    const period = document.getElementById('pricing-form-period')?.value.trim();
+    const description = document.getElementById('pricing-form-desc')?.value.trim();
+    const features = document.getElementById('pricing-form-features')?.value.trim();
+
+    const payload = { name, starting_price, badge, period, description, features };
+    const method = planId ? 'PUT' : 'POST';
+    const endpoint = planId ? `/api/pricing/${planId}` : '/api/pricing';
+
+    try {
+        const res = await fetch(endpoint, {
+            method,
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+        const result = await res.json();
+        if (result.success) {
+            alert(planId ? 'تم تحديث الباقة بنجاح.' : 'تم إضافة الباقة بنجاح.');
+            window.closeModal('pricing-modal');
+            loadPricing();
+        } else {
+            alert(result.message || 'فشلت العملية.');
+        }
+    } catch(err) {
+        alert('حدث خطأ أثناء حفظ الباقة.');
+    }
+};
+
+window.deletePricingPlan = async function(id) {
+    if (!confirm('هل أنت متأكد من حذف هذه الباقة؟')) return;
+    try {
+        const res = await fetch(`/api/pricing/${id}`, { method: 'DELETE' });
+        const result = await res.json();
+        if (result.success) {
+            loadPricing();
+        } else {
+            alert(result.message || 'فشل حذف الباقة.');
+        }
+    } catch(e) {
+        alert('خطأ أثناء الحذف.');
+    }
+};
+
+// =========================================================================
+// 9. إدارة المدونة والـ SEO (Blog CRUD)
+// =========================================================================
+
 async function loadBlogPosts() {
     const listWrap = document.getElementById('admin-blog-list');
     if (!listWrap) return;
@@ -465,14 +856,26 @@ async function loadBlogPosts() {
         const res = await fetch('/api/blog');
         const data = await res.json();
         if (data.success && Array.isArray(data.posts)) {
-            listWrap.innerHTML = data.posts.map(b => `
-                <div class="stat-card" style="display: block; margin-bottom: 1rem; border-right: 4px solid #8b5cf6;">
-                    <div style="display: flex; justify-content: space-between; align-items: center;">
-                        <h4 style="margin: 0; font-size: 1.05rem;">${escapeHtml(b.title)}</h4>
-                        <span class="status-badge reviewed">${escapeHtml(b.category)}</span>
+            currentBlogPosts = data.posts;
+            if (currentBlogPosts.length === 0) {
+                listWrap.innerHTML = `<p style="color: #64748b; text-align: center; grid-column: 1/-1; padding: 2rem;">لا توجد مقالات منشورة حالياً.</p>`;
+                return;
+            }
+
+            listWrap.innerHTML = currentBlogPosts.map(b => `
+                <div class="stat-card" style="display: flex; flex-direction: column; justify-content: space-between; border-top: 4px solid #8b5cf6;">
+                    <div>
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                            <h4 style="margin: 0; font-size: 1.05rem; color: #0f172a;">${escapeHtml(b.title)}</h4>
+                            <span class="status-badge reviewed">${escapeHtml(b.category)}</span>
+                        </div>
+                        <p style="font-size: 0.85rem; color: #64748b; margin: 0.5rem 0; line-height: 1.5;">${escapeHtml(b.summary)}</p>
+                        <div style="font-size: 0.8rem; color: #0284c7; margin-bottom: 0.5rem;">الرابط: /blog/${escapeHtml(b.slug)}</div>
                     </div>
-                    <p style="font-size: 0.85rem; color: #475569; margin: 0.4rem 0;">${escapeHtml(b.summary)}</p>
-                    <div style="font-size: 0.8rem; color: #64748b;">الرابط: /blog/${escapeHtml(b.slug)}</div>
+                    <div style="display: flex; gap: 0.5rem; justify-content: flex-end; border-top: 1px solid #f1f5f9; padding-top: 0.75rem;">
+                        <button class="btn btn-secondary btn-sm" onclick="openBlogModal(${b.id})">✏️ تعديل</button>
+                        <button class="btn btn-secondary btn-sm" style="color: #ef4444;" onclick="deleteBlogPost(${b.id})">🗑️ حذف</button>
+                    </div>
                 </div>
             `).join('');
         }
@@ -481,7 +884,263 @@ async function loadBlogPosts() {
     }
 }
 
-// 9. إدارة الإعدادات (Settings)
+window.openBlogModal = function(blogId) {
+    const titleEl = document.getElementById('blog-modal-title');
+    const idEl = document.getElementById('blog-form-id');
+    const fTitle = document.getElementById('blog-form-title');
+    const fCategory = document.getElementById('blog-form-category');
+    const fImg = document.getElementById('blog-form-image-url');
+    const fSummary = document.getElementById('blog-form-summary');
+    const fContent = document.getElementById('blog-form-content');
+    const fKeywords = document.getElementById('blog-form-keywords');
+
+    if (blogId) {
+        const post = currentBlogPosts.find(b => b.id === blogId);
+        if (!post) return;
+        if (titleEl) titleEl.textContent = 'تعديل المقال';
+        if (idEl) idEl.value = post.id;
+        if (fTitle) fTitle.value = post.title;
+        if (fCategory) fCategory.value = post.category;
+        if (fImg) fImg.value = post.cover_image || '';
+        if (fSummary) fSummary.value = post.summary;
+        if (fContent) fContent.value = post.content;
+        if (fKeywords) fKeywords.value = post.keywords || '';
+    } else {
+        if (titleEl) titleEl.textContent = 'كتابة مقال جديد';
+        document.getElementById('blog-form')?.reset();
+        if (idEl) idEl.value = '';
+    }
+
+    const modal = document.getElementById('blog-modal');
+    if (modal) modal.classList.add('active');
+};
+
+window.saveBlogForm = async function(e) {
+    if (e) e.preventDefault();
+    const blogId = document.getElementById('blog-form-id')?.value;
+    const title = document.getElementById('blog-form-title')?.value.trim();
+    const category = document.getElementById('blog-form-category')?.value.trim();
+    const cover_image_url = document.getElementById('blog-form-image-url')?.value.trim();
+    const summary = document.getElementById('blog-form-summary')?.value.trim();
+    const content = document.getElementById('blog-form-content')?.value.trim();
+    const keywords = document.getElementById('blog-form-keywords')?.value.trim();
+
+    const payload = { title, category, cover_image_url, summary, content, keywords };
+    const method = blogId ? 'PUT' : 'POST';
+    const endpoint = blogId ? `/api/blog/${blogId}` : '/api/blog';
+
+    try {
+        const res = await fetch(endpoint, {
+            method,
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+        const result = await res.json();
+        if (result.success) {
+            alert(blogId ? 'تم تحديث المقال بنجاح.' : 'تم نشر المقال بنجاح.');
+            window.closeModal('blog-modal');
+            loadBlogPosts();
+            loadDashboardStats();
+        } else {
+            alert(result.message || 'فشلت العملية.');
+        }
+    } catch(err) {
+        alert('حدث خطأ أثناء نشر المقال.');
+    }
+};
+
+window.deleteBlogPost = async function(id) {
+    if (!confirm('هل أنت متأكد من حذف هذا المقال؟')) return;
+    try {
+        const res = await fetch(`/api/blog/${id}`, { method: 'DELETE' });
+        const result = await res.json();
+        if (result.success) {
+            loadBlogPosts();
+            loadDashboardStats();
+        } else {
+            alert(result.message || 'فشل حذف المقال.');
+        }
+    } catch(e) {
+        alert('خطأ أثناء الحذف.');
+    }
+};
+
+// =========================================================================
+// 10. إدارة الأسئلة الشائعة (FAQ CRUD)
+// =========================================================================
+
+async function loadFaqs() {
+    const listWrap = document.getElementById('admin-faq-list');
+    if (!listWrap) return;
+
+    try {
+        const res = await fetch('/api/faq');
+        const data = await res.json();
+        if (data.success && Array.isArray(data.faqs)) {
+            currentFaqs = data.faqs;
+            if (currentFaqs.length === 0) {
+                listWrap.innerHTML = `<p style="color: #64748b; text-align: center; padding: 2rem;">لا توجد أسئلة شائعة مضافة حالياً.</p>`;
+                return;
+            }
+
+            listWrap.innerHTML = currentFaqs.map(faq => `
+                <div class="stat-card" style="display: block; margin-bottom: 1rem; border-right: 4px solid #3b82f6;">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <h4 style="margin: 0; font-size: 1.05rem; color: #0f172a;">${escapeHtml(faq.question)}</h4>
+                        <span class="status-badge waiting">${escapeHtml(faq.category || 'عام')}</span>
+                    </div>
+                    <p style="font-size: 0.9rem; color: #475569; margin: 0.5rem 0 0.75rem 0; line-height: 1.6;">${escapeHtml(faq.answer)}</p>
+                    <div style="display: flex; gap: 0.5rem; justify-content: flex-end; border-top: 1px solid #f1f5f9; padding-top: 0.5rem;">
+                        <button class="btn btn-secondary btn-sm" onclick="openFaqModal(${faq.id})">✏️ تعديل</button>
+                        <button class="btn btn-secondary btn-sm" style="color: #ef4444;" onclick="deleteFaq(${faq.id})">🗑️ حذف</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+    } catch(e) {
+        console.error('خطأ تحميل الأسئلة:', e);
+    }
+}
+
+window.openFaqModal = function(faqId) {
+    const titleEl = document.getElementById('faq-modal-title');
+    const idEl = document.getElementById('faq-form-id');
+    const fQuestion = document.getElementById('faq-form-question');
+    const fCategory = document.getElementById('faq-form-category');
+    const fAnswer = document.getElementById('faq-form-answer');
+
+    if (faqId) {
+        const faq = currentFaqs.find(f => f.id === faqId);
+        if (!faq) return;
+        if (titleEl) titleEl.textContent = 'تعديل السؤال الشائع';
+        if (idEl) idEl.value = faq.id;
+        if (fQuestion) fQuestion.value = faq.question;
+        if (fCategory) fCategory.value = faq.category || 'عام';
+        if (fAnswer) fAnswer.value = faq.answer;
+    } else {
+        if (titleEl) titleEl.textContent = 'إضافة سؤال شائع';
+        document.getElementById('faq-form')?.reset();
+        if (idEl) idEl.value = '';
+    }
+
+    const modal = document.getElementById('faq-modal');
+    if (modal) modal.classList.add('active');
+};
+
+window.saveFaqForm = async function(e) {
+    if (e) e.preventDefault();
+    const faqId = document.getElementById('faq-form-id')?.value;
+    const question = document.getElementById('faq-form-question')?.value.trim();
+    const category = document.getElementById('faq-form-category')?.value.trim();
+    const answer = document.getElementById('faq-form-answer')?.value.trim();
+
+    const payload = { question, category, answer };
+    const method = faqId ? 'PUT' : 'POST';
+    const endpoint = faqId ? `/api/faq/${faqId}` : '/api/faq';
+
+    try {
+        const res = await fetch(endpoint, {
+            method,
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+        const result = await res.json();
+        if (result.success) {
+            alert(faqId ? 'تم تحديث السؤال بنجاح.' : 'تم إضافة السؤال بنجاح.');
+            window.closeModal('faq-modal');
+            loadFaqs();
+        } else {
+            alert(result.message || 'فشلت العملية.');
+        }
+    } catch(err) {
+        alert('حدث خطأ أثناء حفظ السؤال.');
+    }
+};
+
+window.deleteFaq = async function(id) {
+    if (!confirm('هل أنت متأكد من حذف هذا السؤال؟')) return;
+    try {
+        const res = await fetch(`/api/faq/${id}`, { method: 'DELETE' });
+        const result = await res.json();
+        if (result.success) {
+            loadFaqs();
+        } else {
+            alert(result.message || 'فشل حذف السؤال.');
+        }
+    } catch(e) {
+        alert('خطأ أثناء الحذف.');
+    }
+};
+
+// =========================================================================
+// 11. إدارة رسائل التواصل (Messages)
+// =========================================================================
+
+async function loadMessages() {
+    const listWrap = document.getElementById('admin-messages-list');
+    if (!listWrap) return;
+
+    try {
+        const res = await fetch('/api/messages');
+        const data = await res.json();
+        if (data.success && Array.isArray(data.messages)) {
+            currentMessages = data.messages;
+            if (currentMessages.length === 0) {
+                listWrap.innerHTML = `<p style="color: #64748b; text-align: center; padding: 2rem;">لا توجد رسائل تواصل حالياً.</p>`;
+                return;
+            }
+
+            listWrap.innerHTML = currentMessages.map(m => {
+                const cleanPhone = (m.phone || '').replace(/[^0-9]/g, '');
+                return `
+                    <div class="stat-card" style="display: block; margin-bottom: 1rem; border-right: 4px solid ${m.is_read ? '#cbd5e1' : '#0284c7'};">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <h4 style="margin: 0; font-size: 1rem; color: #0f172a;">${escapeHtml(m.name)} (${escapeHtml(m.phone)})</h4>
+                            <span style="font-size: 0.75rem; color: #64748b;">${new Date(m.created_at).toLocaleDateString('ar-EG', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}</span>
+                        </div>
+                        ${m.subject ? `<div style="font-size: 0.82rem; font-weight: 700; color: #0284c7; margin-top: 0.25rem;">الموضوع: ${escapeHtml(m.subject)}</div>` : ''}
+                        <p style="font-size: 0.9rem; color: #334155; margin: 0.6rem 0; line-height: 1.6;">${escapeHtml(m.message)}</p>
+                        <div style="display: flex; gap: 0.5rem; justify-content: flex-end; align-items: center; border-top: 1px solid #f1f5f9; padding-top: 0.5rem;">
+                            ${!m.is_read ? `<button onclick="markMessageRead(${m.id})" class="btn btn-secondary btn-sm" style="font-size: 0.78rem;">✓ تحديد كمقروء</button>` : ''}
+                            <a href="https://wa.me/${cleanPhone}" target="_blank" class="btn btn-whatsapp btn-sm">واتساب</a>
+                            <button onclick="deleteMessage(${m.id})" class="btn btn-secondary btn-sm" style="color: #ef4444; font-size: 0.78rem;">🗑️ حذف</button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+    } catch(e) {
+        console.error('خطأ تحميل الرسائل:', e);
+    }
+}
+
+window.markMessageRead = async function(id) {
+    try {
+        const res = await fetch(`/api/messages/${id}/read`, { method: 'PATCH' });
+        const result = await res.json();
+        if (result.success) {
+            loadMessages();
+            loadDashboardStats();
+        }
+    } catch(e) {}
+};
+
+window.deleteMessage = async function(id) {
+    if (!confirm('هل أنت متأكد من حذف هذه الرسالة؟')) return;
+    try {
+        const res = await fetch(`/api/messages/${id}`, { method: 'DELETE' });
+        const result = await res.json();
+        if (result.success) {
+            loadMessages();
+            loadDashboardStats();
+        }
+    } catch(e) {}
+};
+
+// =========================================================================
+// 12. إدارة الإعدادات (Settings)
+// =========================================================================
+
 async function loadSettings() {
     try {
         const res = await fetch('/api/settings');
@@ -534,7 +1193,6 @@ window.testEmailConnection = async function() {
     const statusEl = document.getElementById('test-email-status');
     const btn = document.getElementById('btn-test-email');
     
-    // قراءة الإعدادات
     const settings = {
         whatsapp_number: (document.getElementById('setting-whatsapp')?.value || '').trim(),
         site_name: (document.getElementById('setting-site-name')?.value || '').trim(),
@@ -560,14 +1218,12 @@ window.testEmailConnection = async function() {
             statusEl.textContent = '⏳ جاري الاتصال بخوادم Google وإرسال بريد تجريبي...';
         }
 
-        // حفظ الإعدادات أولاً
         await fetch('/api/settings', {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ settings })
         });
 
-        // طلب الفحص
         const res = await fetch('/api/settings/test-email', { method: 'POST' });
         const result = await res.json();
 
@@ -592,55 +1248,89 @@ window.testEmailConnection = async function() {
     }
 };
 
-// 10. تحميل رسائل التواصل (Messages)
-async function loadMessages() {
-    const listWrap = document.getElementById('admin-messages-list');
-    if (!listWrap) return;
+// =========================================================================
+// 13. الملف الشخصي والأمان (Profile & Password Change)
+// =========================================================================
 
+async function loadAdminProfile() {
     try {
-        const res = await fetch('/api/messages');
+        const res = await fetch('/api/auth/me');
+        if (!res.ok) return;
         const data = await res.json();
-        if (data.success && Array.isArray(data.messages)) {
-            if (data.messages.length === 0) {
-                listWrap.innerHTML = `<p style="color: #64748b; text-align: center; padding: 2rem;">لا توجد رسائل تواصل حالياً.</p>`;
-                return;
-            }
-            listWrap.innerHTML = data.messages.map(m => `
-                <div class="stat-card" style="display: block; margin-bottom: 1rem; border-right: 4px solid ${m.is_read ? '#cbd5e1' : '#0284c7'};">
-                    <div style="display: flex; justify-content: space-between; align-items: center;">
-                        <h4 style="margin: 0; font-size: 1rem;">${escapeHtml(m.name)} (${escapeHtml(m.phone)})</h4>
-                        <span style="font-size: 0.75rem; color: #64748b;">${new Date(m.created_at).toLocaleDateString('ar-EG')}</span>
-                    </div>
-                    <p style="font-size: 0.9rem; color: #334155; margin: 0.6rem 0; line-height: 1.6;">${escapeHtml(m.message)}</p>
-                    <div style="display: flex; gap: 0.5rem; justify-content: flex-end;">
-                        <a href="https://wa.me/${(m.phone || '').replace(/[^0-9]/g, '')}" target="_blank" class="btn btn-whatsapp btn-sm">واتساب</a>
-                    </div>
-                </div>
-            `).join('');
+        if (data.success && data.user) {
+            const u = data.user;
+            const unameEl = document.getElementById('profile-username');
+            const emailEl = document.getElementById('profile-email');
+            if (unameEl) unameEl.value = u.username || '';
+            if (emailEl) emailEl.value = u.email || '';
         }
-    } catch(e) {
-        console.error('خطأ تحميل الرسائل:', e);
-    }
+    } catch(e) {}
 }
 
-// 11. تشغيل أكورديون دليل النشر والـ SEO
+window.updateAdminProfile = async function(e) {
+    if (e) e.preventDefault();
+    const username = document.getElementById('profile-username')?.value.trim();
+    const email = document.getElementById('profile-email')?.value.trim();
+    const current_password = document.getElementById('profile-current-password')?.value.trim();
+    const new_password = document.getElementById('profile-new-password')?.value.trim();
+    const confirm_password = document.getElementById('profile-confirm-password')?.value.trim();
+
+    if (new_password) {
+        if (new_password.length < 6) {
+            alert('كلمة المرور الجديدة يجب أن تكون 6 أحرف على الأقل.');
+            return;
+        }
+        if (new_password !== confirm_password) {
+            alert('كلمة المرور وتأكيدها غير متطابقين.');
+            return;
+        }
+        if (!current_password) {
+            alert('يرجى كتابة كلمة المرور الحالية للتأكيد.');
+            return;
+        }
+    }
+
+    const saveBtn = document.getElementById('profile-save-btn');
+    if (saveBtn) saveBtn.disabled = true;
+
+    try {
+        const res = await fetch('/api/auth/profile', {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username, email, current_password, new_password })
+        });
+        const result = await res.json();
+        if (result.success) {
+            alert('تم تحديث الملف الشخصي وكلمة المرور بنجاح.');
+            document.getElementById('profile-current-password').value = '';
+            document.getElementById('profile-new-password').value = '';
+            document.getElementById('profile-confirm-password').value = '';
+        } else {
+            alert(result.message || 'تعذر تحديث البيانات.');
+        }
+    } catch (err) {
+        alert('حدث خطأ أثناء تحديث الملف الشخصي.');
+    } finally {
+        if (saveBtn) saveBtn.disabled = false;
+    }
+};
+
+// =========================================================================
+// 14. الأدوات المساعدة ودليل الـ SEO وتسجيل الخروج
+// =========================================================================
+
 function initGuideAccordion() {
     const headers = document.querySelectorAll('.guide-step-header');
     headers.forEach(header => {
         header.addEventListener('click', () => {
             const body = header.nextElementSibling;
             if (body) {
-                if (body.style.display === 'block') {
-                    body.style.display = 'none';
-                } else {
-                    body.style.display = 'block';
-                }
+                body.style.display = body.style.display === 'block' ? 'none' : 'block';
             }
         });
     });
 }
 
-// 12. تسجيل الخروج
 window.adminLogout = async function() {
     try {
         await fetch('/api/auth/logout', { method: 'POST' });
@@ -650,7 +1340,6 @@ window.adminLogout = async function() {
     }
 };
 
-// دالة مساعدة لحماية النصوص من XSS
 function escapeHtml(text) {
     if (!text) return '';
     return String(text)

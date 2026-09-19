@@ -352,6 +352,43 @@ app.get('/api/auth/me', requireAuth, (req, res) => {
     res.json({ success: true, user: req.user });
 });
 
+// تحديث الملف الشخصي وكلمة المرور للمدير
+app.put('/api/auth/profile', requireAuth, async (req, res) => {
+    try {
+        const { username, email, current_password, new_password } = req.body;
+        const user = await db.get('SELECT * FROM users WHERE id = ?', [req.user.id]);
+        if (!user) {
+            return res.status(404).json({ success: false, message: 'المستخدم غير موجود.' });
+        }
+
+        if (new_password) {
+            if (!current_password) {
+                return res.status(400).json({ success: false, message: 'يرجى إدخال كلمة المرور الحالية لتغيير كلمة المرور.' });
+            }
+            const match = await bcrypt.compare(current_password, user.password_hash);
+            if (!match) {
+                return res.status(400).json({ success: false, message: 'كلمة المرور الحالية غير صحيحة.' });
+            }
+            if (new_password.length < 6) {
+                return res.status(400).json({ success: false, message: 'كلمة المرور الجديدة يجب أن تكون 6 أحرف على الأقل.' });
+            }
+            const newHash = await bcrypt.hash(new_password, 10);
+            await db.run('UPDATE users SET password_hash = ? WHERE id = ?', [newHash, user.id]);
+        }
+
+        if (username || email) {
+            await db.run(
+                'UPDATE users SET username = COALESCE(?, username), email = COALESCE(?, email) WHERE id = ?',
+                [username ? sanitizeString(username) : null, email ? sanitizeString(email) : null, user.id]
+            );
+        }
+
+        res.json({ success: true, message: 'تم تحديث بيانات الحساب بنجاح.' });
+    } catch (err) {
+        res.status(500).json({ success: false, message: 'خطأ أثناء تحديث الملف الشخصي.' });
+    }
+});
+
 // =========================================================================
 // 5. REST APIs - نظام الطلبات الحقيقي (Real Orders API)
 // =========================================================================
@@ -479,23 +516,77 @@ app.patch('/api/orders/:id', requireAuth, async (req, res) => {
 });
 
 // =========================================================================
-// 6. REST APIs - الخدمات وسابقة الأعمال والمدونة
+// 6. REST APIs - الخدمات وسابقة الأعمال والمدونة والباقات والأسئلة والرسائل
 // =========================================================================
 
-// الخدمات
+// --- الخدمات (Services) ---
 app.get('/api/services', async (req, res) => {
     try {
-        const services = await db.all('SELECT * FROM services WHERE is_active = 1 ORDER BY display_order ASC');
+        const services = await db.all('SELECT * FROM services ORDER BY display_order ASC');
         res.json({ success: true, services });
     } catch (err) {
         res.status(500).json({ success: false, message: 'خطأ في جلب الخدمات.' });
     }
 });
 
-// سابقة الأعمال
+app.post('/api/services', requireAuth, async (req, res) => {
+    try {
+        const { title, short_description, full_description, starting_price, features, icon_svg } = req.body;
+        if (!title || !short_description || !starting_price) {
+            return res.status(400).json({ success: false, message: 'يرجى إدخال عنوان الخدمة، الوصف والسعر.' });
+        }
+        const slug = 'srv-' + Date.now().toString(36) + '-' + Math.random().toString(36).substring(2, 6);
+        const featuresJson = typeof features === 'string' ? JSON.stringify(features.split('\n').map(f => f.trim()).filter(Boolean)) : JSON.stringify(features || []);
+        const defaultSvg = icon_svg || '<svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>';
+
+        await db.run(
+            `INSERT INTO services (slug, title, short_description, full_description, starting_price, features, icon_svg)
+             VALUES (?, ?, ?, ?, ?, ?, ?)`,
+            [slug, sanitizeString(title), sanitizeString(short_description), sanitizeString(full_description || short_description), sanitizeString(starting_price), featuresJson, defaultSvg]
+        );
+
+        res.json({ success: true, message: 'تم إضافة الخدمة بنجاح.' });
+    } catch (err) {
+        res.status(500).json({ success: false, message: 'خطأ في إضافة الخدمة.' });
+    }
+});
+
+app.put('/api/services/:id', requireAuth, async (req, res) => {
+    try {
+        const { title, short_description, full_description, starting_price, features, is_active } = req.body;
+        const featuresJson = features ? (typeof features === 'string' ? JSON.stringify(features.split('\n').map(f => f.trim()).filter(Boolean)) : JSON.stringify(features)) : null;
+
+        await db.run(
+            `UPDATE services SET
+                title = COALESCE(?, title),
+                short_description = COALESCE(?, short_description),
+                full_description = COALESCE(?, full_description),
+                starting_price = COALESCE(?, starting_price),
+                features = COALESCE(?, features),
+                is_active = COALESCE(?, is_active)
+             WHERE id = ?`,
+            [title ? sanitizeString(title) : null, short_description ? sanitizeString(short_description) : null, full_description ? sanitizeString(full_description) : null, starting_price ? sanitizeString(starting_price) : null, featuresJson, is_active !== undefined ? is_active : null, req.params.id]
+        );
+
+        res.json({ success: true, message: 'تم تحديث الخدمة بنجاح.' });
+    } catch (err) {
+        res.status(500).json({ success: false, message: 'خطأ في تحديث الخدمة.' });
+    }
+});
+
+app.delete('/api/services/:id', requireAuth, async (req, res) => {
+    try {
+        await db.run('DELETE FROM services WHERE id = ?', [req.params.id]);
+        res.json({ success: true, message: 'تم حذف الخدمة بنجاح.' });
+    } catch (err) {
+        res.status(500).json({ success: false, message: 'خطأ في حذف الخدمة.' });
+    }
+});
+
+// --- سابقة الأعمال (Portfolio) ---
 app.get('/api/portfolio', async (req, res) => {
     try {
-        const items = await db.all('SELECT * FROM portfolio WHERE is_visible = 1 ORDER BY display_order ASC, created_at DESC');
+        const items = await db.all('SELECT * FROM portfolio ORDER BY display_order ASC, created_at DESC');
         res.json({ success: true, items });
     } catch (err) {
         res.status(500).json({ success: false, message: 'خطأ في جلب سابقة الأعمال.' });
@@ -505,19 +596,47 @@ app.get('/api/portfolio', async (req, res) => {
 app.post('/api/portfolio', requireAuth, upload.single('cover_image'), async (req, res) => {
     try {
         const { title, category, description, client_name, live_demo_url, tech_stack } = req.body;
-        const slug = title.toLowerCase().replace(/[^a-z0-9\u0600-\u06FF]/g, '-');
-        const coverImage = req.file ? `/uploads/${req.file.filename}` : '/assets/portfolio-project.svg';
+        if (!title || !category || !description) {
+            return res.status(400).json({ success: false, message: 'يرجى إدخال عنوان المشروع، التصنيف، والوصف.' });
+        }
+        const slug = 'proj-' + Date.now().toString(36);
+        const coverImage = req.file ? `/uploads/${req.file.filename}` : (req.body.cover_image_url || '/assets/portfolio-project.svg');
         const techStackJson = tech_stack ? JSON.stringify(tech_stack.split(',').map(t => t.trim())) : JSON.stringify([]);
 
         await db.run(
             `INSERT INTO portfolio (slug, title, category, description, client_name, cover_image, live_demo_url, tech_stack)
              VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-            [slug, title, category, description, client_name, coverImage, live_demo_url, techStackJson]
+            [slug, sanitizeString(title), sanitizeString(category), sanitizeString(description), sanitizeString(client_name || 'عام'), coverImage, live_demo_url ? sanitizeString(live_demo_url) : null, techStackJson]
         );
 
         res.json({ success: true, message: 'تم إضافة المشروع بنجاح.' });
     } catch (err) {
         res.status(500).json({ success: false, message: 'خطأ في إضافة المشروع.' });
+    }
+});
+
+app.put('/api/portfolio/:id', requireAuth, upload.single('cover_image'), async (req, res) => {
+    try {
+        const { title, category, description, client_name, live_demo_url, tech_stack } = req.body;
+        const coverImage = req.file ? `/uploads/${req.file.filename}` : (req.body.cover_image_url || null);
+        const techStackJson = tech_stack ? JSON.stringify(tech_stack.split(',').map(t => t.trim())) : null;
+
+        await db.run(
+            `UPDATE portfolio SET
+                title = COALESCE(?, title),
+                category = COALESCE(?, category),
+                description = COALESCE(?, description),
+                client_name = COALESCE(?, client_name),
+                live_demo_url = COALESCE(?, live_demo_url),
+                cover_image = COALESCE(?, cover_image),
+                tech_stack = COALESCE(?, tech_stack)
+             WHERE id = ?`,
+            [title ? sanitizeString(title) : null, category ? sanitizeString(category) : null, description ? sanitizeString(description) : null, client_name ? sanitizeString(client_name) : null, live_demo_url ? sanitizeString(live_demo_url) : null, coverImage, techStackJson, req.params.id]
+        );
+
+        res.json({ success: true, message: 'تم تحديث المشروع بنجاح.' });
+    } catch (err) {
+        res.status(500).json({ success: false, message: 'خطأ في تحديث المشروع.' });
     }
 });
 
@@ -530,10 +649,10 @@ app.delete('/api/portfolio/:id', requireAuth, async (req, res) => {
     }
 });
 
-// مقالات المدونة
+// --- مقالات المدونة والـ SEO ---
 app.get('/api/blog', async (req, res) => {
     try {
-        const posts = await db.all('SELECT * FROM blog_posts WHERE is_published = 1 ORDER BY published_at DESC');
+        const posts = await db.all('SELECT * FROM blog_posts ORDER BY published_at DESC');
         res.json({ success: true, posts });
     } catch (err) {
         res.status(500).json({ success: false, message: 'خطأ في جلب المقالات.' });
@@ -543,13 +662,16 @@ app.get('/api/blog', async (req, res) => {
 app.post('/api/blog', requireAuth, upload.single('cover_image'), async (req, res) => {
     try {
         const { title, summary, content, category, seo_title, seo_description, keywords } = req.body;
-        const slug = title.toLowerCase().replace(/[^a-z0-9\u0600-\u06FF]/g, '-');
-        const coverImage = req.file ? `/uploads/${req.file.filename}` : '/assets/blog-wedding.svg';
+        if (!title || !summary || !content) {
+            return res.status(400).json({ success: false, message: 'يرجى إدخال عنوان المقال، الملخص، والمحتوى.' });
+        }
+        const slug = 'blog-' + Date.now().toString(36);
+        const coverImage = req.file ? `/uploads/${req.file.filename}` : (req.body.cover_image_url || '/assets/blog-wedding.svg');
 
         await db.run(
             `INSERT INTO blog_posts (slug, title, summary, content, cover_image, category, seo_title, seo_description, keywords)
              VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-            [slug, title, summary, content, coverImage, category, seo_title, seo_description, keywords]
+            [slug, sanitizeString(title), sanitizeString(summary), sanitizeString(content), coverImage, sanitizeString(category || 'عام'), seo_title ? sanitizeString(seo_title) : null, seo_description ? sanitizeString(seo_description) : null, keywords ? sanitizeString(keywords) : null]
         );
 
         res.json({ success: true, message: 'تم نشر المقال بنجاح.' });
@@ -558,27 +680,165 @@ app.post('/api/blog', requireAuth, upload.single('cover_image'), async (req, res
     }
 });
 
-// باقات الأسعار
+app.put('/api/blog/:id', requireAuth, upload.single('cover_image'), async (req, res) => {
+    try {
+        const { title, summary, content, category, seo_title, seo_description, keywords } = req.body;
+        const coverImage = req.file ? `/uploads/${req.file.filename}` : (req.body.cover_image_url || null);
+
+        await db.run(
+            `UPDATE blog_posts SET
+                title = COALESCE(?, title),
+                summary = COALESCE(?, summary),
+                content = COALESCE(?, content),
+                category = COALESCE(?, category),
+                cover_image = COALESCE(?, cover_image),
+                seo_title = COALESCE(?, seo_title),
+                seo_description = COALESCE(?, seo_description),
+                keywords = COALESCE(?, keywords),
+                updated_at = CURRENT_TIMESTAMP
+             WHERE id = ?`,
+            [title ? sanitizeString(title) : null, summary ? sanitizeString(summary) : null, content ? sanitizeString(content) : null, category ? sanitizeString(category) : null, coverImage, seo_title ? sanitizeString(seo_title) : null, seo_description ? sanitizeString(seo_description) : null, keywords ? sanitizeString(keywords) : null, req.params.id]
+        );
+
+        res.json({ success: true, message: 'تم تحديث المقال بنجاح.' });
+    } catch (err) {
+        res.status(500).json({ success: false, message: 'خطأ في تحديث المقال.' });
+    }
+});
+
+app.delete('/api/blog/:id', requireAuth, async (req, res) => {
+    try {
+        await db.run('DELETE FROM blog_posts WHERE id = ?', [req.params.id]);
+        res.json({ success: true, message: 'تم حذف المقال بنجاح.' });
+    } catch (err) {
+        res.status(500).json({ success: false, message: 'خطأ في حذف المقال.' });
+    }
+});
+
+// --- باقات الأسعار (Pricing Plans) ---
 app.get('/api/pricing', async (req, res) => {
     try {
-        const plans = await db.all('SELECT * FROM pricing_plans WHERE is_active = 1 ORDER BY display_order ASC');
+        const plans = await db.all('SELECT * FROM pricing_plans ORDER BY display_order ASC');
         res.json({ success: true, plans });
     } catch (err) {
         res.status(500).json({ success: false, message: 'خطأ في جلب الباقات.' });
     }
 });
 
-// الأسئلة الشائعة
+app.post('/api/pricing', requireAuth, async (req, res) => {
+    try {
+        const { name, badge, starting_price, period, description, features, is_featured } = req.body;
+        if (!name || !starting_price || !description) {
+            return res.status(400).json({ success: false, message: 'يرجى إدخال اسم الباقة، السعر، والوصف.' });
+        }
+        const slug = 'plan-' + Date.now().toString(36);
+        const featuresJson = typeof features === 'string' ? JSON.stringify(features.split('\n').map(f => f.trim()).filter(Boolean)) : JSON.stringify(features || []);
+
+        await db.run(
+            `INSERT INTO pricing_plans (name, slug, badge, starting_price, period, description, features, is_featured)
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+            [sanitizeString(name), slug, badge ? sanitizeString(badge) : null, sanitizeString(starting_price), period ? sanitizeString(period) : 'تدفع مرة واحدة', sanitizeString(description), featuresJson, is_featured ? 1 : 0]
+        );
+
+        res.json({ success: true, message: 'تم إضافة الباقة بنجاح.' });
+    } catch (err) {
+        res.status(500).json({ success: false, message: 'خطأ في إضافة الباقة.' });
+    }
+});
+
+app.put('/api/pricing/:id', requireAuth, async (req, res) => {
+    try {
+        const { name, badge, starting_price, period, description, features, is_featured, is_active } = req.body;
+        const featuresJson = features ? (typeof features === 'string' ? JSON.stringify(features.split('\n').map(f => f.trim()).filter(Boolean)) : JSON.stringify(features)) : null;
+
+        await db.run(
+            `UPDATE pricing_plans SET
+                name = COALESCE(?, name),
+                badge = COALESCE(?, badge),
+                starting_price = COALESCE(?, starting_price),
+                period = COALESCE(?, period),
+                description = COALESCE(?, description),
+                features = COALESCE(?, features),
+                is_featured = COALESCE(?, is_featured),
+                is_active = COALESCE(?, is_active)
+             WHERE id = ?`,
+            [name ? sanitizeString(name) : null, badge !== undefined ? sanitizeString(badge) : null, starting_price ? sanitizeString(starting_price) : null, period ? sanitizeString(period) : null, description ? sanitizeString(description) : null, featuresJson, is_featured !== undefined ? is_featured : null, is_active !== undefined ? is_active : null, req.params.id]
+        );
+
+        res.json({ success: true, message: 'تم تحديث الباقة بنجاح.' });
+    } catch (err) {
+        res.status(500).json({ success: false, message: 'خطأ في تحديث الباقة.' });
+    }
+});
+
+app.delete('/api/pricing/:id', requireAuth, async (req, res) => {
+    try {
+        await db.run('DELETE FROM pricing_plans WHERE id = ?', [req.params.id]);
+        res.json({ success: true, message: 'تم حذف الباقة بنجاح.' });
+    } catch (err) {
+        res.status(500).json({ success: false, message: 'خطأ في حذف الباقة.' });
+    }
+});
+
+// --- الأسئلة الشائعة (FAQ) ---
 app.get('/api/faq', async (req, res) => {
     try {
-        const faqs = await db.all('SELECT * FROM faq WHERE is_active = 1 ORDER BY display_order ASC');
+        const faqs = await db.all('SELECT * FROM faq ORDER BY display_order ASC');
         res.json({ success: true, faqs });
     } catch (err) {
         res.status(500).json({ success: false, message: 'خطأ في جلب الأسئلة الشائعة.' });
     }
 });
 
-// رسائل التواصل
+app.post('/api/faq', requireAuth, async (req, res) => {
+    try {
+        const { question, answer, category, display_order } = req.body;
+        if (!question || !answer) {
+            return res.status(400).json({ success: false, message: 'يرجى إدخال السؤال والإجابة.' });
+        }
+
+        await db.run(
+            `INSERT INTO faq (question, answer, category, display_order) VALUES (?, ?, ?, ?)`,
+            [sanitizeString(question), sanitizeString(answer), category ? sanitizeString(category) : 'عام', display_order ? parseInt(display_order) : 0]
+        );
+
+        res.json({ success: true, message: 'تم إضافة السؤال بنجاح.' });
+    } catch (err) {
+        res.status(500).json({ success: false, message: 'خطأ في إضافة السؤال.' });
+    }
+});
+
+app.put('/api/faq/:id', requireAuth, async (req, res) => {
+    try {
+        const { question, answer, category, display_order, is_active } = req.body;
+
+        await db.run(
+            `UPDATE faq SET
+                question = COALESCE(?, question),
+                answer = COALESCE(?, answer),
+                category = COALESCE(?, category),
+                display_order = COALESCE(?, display_order),
+                is_active = COALESCE(?, is_active)
+             WHERE id = ?`,
+            [question ? sanitizeString(question) : null, answer ? sanitizeString(answer) : null, category ? sanitizeString(category) : null, display_order !== undefined ? parseInt(display_order) : null, is_active !== undefined ? is_active : null, req.params.id]
+        );
+
+        res.json({ success: true, message: 'تم تحديث السؤال بنجاح.' });
+    } catch (err) {
+        res.status(500).json({ success: false, message: 'خطأ في تحديث السؤال.' });
+    }
+});
+
+app.delete('/api/faq/:id', requireAuth, async (req, res) => {
+    try {
+        await db.run('DELETE FROM faq WHERE id = ?', [req.params.id]);
+        res.json({ success: true, message: 'تم حذف السؤال بنجاح.' });
+    } catch (err) {
+        res.status(500).json({ success: false, message: 'خطأ في حذف السؤال.' });
+    }
+});
+
+// --- رسائل التواصل (Messages) ---
 app.post('/api/messages', formRateLimiter, async (req, res) => {
     try {
         const { name, phone, email, subject, message } = req.body;
@@ -615,6 +875,24 @@ app.get('/api/messages', requireAuth, async (req, res) => {
         res.json({ success: true, messages });
     } catch (err) {
         res.status(500).json({ success: false, message: 'خطأ في جلب الرسائل.' });
+    }
+});
+
+app.patch('/api/messages/:id/read', requireAuth, async (req, res) => {
+    try {
+        await db.run('UPDATE messages SET is_read = 1 WHERE id = ?', [req.params.id]);
+        res.json({ success: true, message: 'تم تحديد الرسالة كمقروءة.' });
+    } catch (err) {
+        res.status(500).json({ success: false, message: 'خطأ في تحديث الرسالة.' });
+    }
+});
+
+app.delete('/api/messages/:id', requireAuth, async (req, res) => {
+    try {
+        await db.run('DELETE FROM messages WHERE id = ?', [req.params.id]);
+        res.json({ success: true, message: 'تم حذف الرسالة بنجاح.' });
+    } catch (err) {
+        res.status(500).json({ success: false, message: 'خطأ في حذف الرسالة.' });
     }
 });
 

@@ -523,3 +523,41 @@
     padding: 1rem;
   }
 }
+
+/* Admin Cards Grid */
+.admin-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.25rem;
+}
+
+/* Printable Invoice */
+.printable-invoice {
+  background: #ffffff;
+  padding: 1.5rem;
+  border-radius: 8px;
+  color: #0f172a;
+}
+
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  
+  #printable-invoice-content, #printable-invoice-content * {
+    visibility: visible;
+  }
+  
+  #printable-invoice-content {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .no-print, .modal-close, .admin-sidebar, .admin-topbar, .admin-sidebar-overlay {
+    display: none !important;
+  }
+}
