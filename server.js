@@ -222,7 +222,12 @@ app.get('/portfolio', (req, res) => {
 // توليد Sitemap.xml ديناميكي من قاعدة البيانات
 app.get('/sitemap.xml', async (req, res) => {
     try {
-        const siteUrl = process.env.SITE_URL || 'http://localhost:3000';
+        const protocol = req.headers['x-forwarded-proto'] || req.protocol || 'https';
+        const host = req.get('host');
+        const siteUrl = process.env.SITE_URL && process.env.SITE_URL !== 'http://localhost:3000' 
+            ? process.env.SITE_URL 
+            : `${protocol}://${host}`;
+
         const services = await db.all('SELECT slug, created_at FROM services WHERE is_active = 1');
         const posts = await db.all('SELECT slug, published_at FROM blog_posts WHERE is_published = 1');
 
@@ -231,7 +236,7 @@ app.get('/sitemap.xml', async (req, res) => {
 
         // الصفحات الثابتة الأساسية المستقلة
         const staticPages = [
-            { url: '/', priority: '1.0', changefreq: 'daily' },
+            { url: '', priority: '1.0', changefreq: 'daily' },
             { url: '/services', priority: '0.9', changefreq: 'weekly' },
             { url: '/portfolio', priority: '0.9', changefreq: 'weekly' },
             { url: '/pricing', priority: '0.8', changefreq: 'weekly' },
@@ -267,7 +272,12 @@ app.get('/sitemap.xml', async (req, res) => {
 
 // ملف Robots.txt
 app.get('/robots.txt', (req, res) => {
-    const siteUrl = process.env.SITE_URL || 'http://localhost:3000';
+    const protocol = req.headers['x-forwarded-proto'] || req.protocol || 'https';
+    const host = req.get('host');
+    const siteUrl = process.env.SITE_URL && process.env.SITE_URL !== 'http://localhost:3000' 
+        ? process.env.SITE_URL 
+        : `${protocol}://${host}`;
+
     res.type('text/plain');
     res.send(`User-agent: *\nAllow: /\nDisallow: /admin/\nDisallow: /api/\n\nSitemap: ${siteUrl}/sitemap.xml\n`);
 });
