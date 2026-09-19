@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة التحكم والإدارة — خدماتك الرقمية</title>
+    <meta name="robots" content="noindex, nofollow">
+
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/admin.css">
+</head>
+<body class="admin-body">
+
+    <!-- Sidebar -->
+    <aside class="admin-sidebar" id="admin-sidebar">
+        <div class="sidebar-brand">
+            <span class="brand-text" style="font-size: 1.1rem;">
+                <span>خدماتك الرقمية</span>
+                <span class="brand-dot"></span>
+            </span>
+        </div>
+
+        <ul class="sidebar-menu">
+            <li>
+                <button class="sidebar-item-btn active" data-tab="overview">
+                    <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
+                    <span>نظرة عامة</span>
+                </button>
+            </li>
+            <li>
+                <button class="sidebar-item-btn" data-tab="orders">
+                    <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
+                    <span>طلبات العملاء</span>
+                    <span class="sidebar-badge" id="badge-new-orders" style="display: none;">0</span>
+                </button>
+            </li>
+            <li>
+                <button class="sidebar-item-btn" data-tab="services">
+                    <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"></path></svg>
+                    <span>الخدمات المعروضة</span>
+                </button>
+            </li>
+            <li>
+                <button class="sidebar-item-btn" data-tab="portfolio">
+                    <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+                    <span>معرض الأعمال</span>
+                </button>
+            </li>
+            <li>
+                <button class="sidebar-item-btn" data-tab="blog">
+                    <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"></path></svg>
+                    <span>المدونة والـ SEO</span>
+                </button>
+            </li>
+            <li>
+                <button class="sidebar-item-btn" data-tab="messages">
+                    <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                    <span>رسائل التواصل</span>
+                    <span class="sidebar-badge danger" id="badge-unread-messages" style="display: none;">0</span>
+                </button>
+            </li>
+            <li>
+                <button class="sidebar-item-btn" data-tab="settings">
+                    <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                    <span>إعدادات الموقع</span>
+                </button>
+            </li>
+            <li>
+                <button class="sidebar-item-btn" data-tab="seo-guide">
+                    <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                    <span>دليل نشر الموقع وSEO</span>
+                </button>
+            </li>
+        </ul>
+
+        <div class="sidebar-footer">
+            <button onclick="adminLogout()" class="btn btn-secondary btn-block btn-sm" style="color: #ef4444;">
+                <span>تسجيل الخروج</span>
+            </button>
+        </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="admin-main">
+        <header class="admin-topbar">
+            <div class="topbar-title-wrap">
+                <h1 id="admin-page-title">نظرة عامة</h1>
+            </div>
+            <div class="topbar-actions">
+                <a href="/" target="_blank" class="btn btn-secondary btn-sm">زيارة الموقع</a>
+                <div class="admin-user-pill">
+                    <span>المدير (Admin)</span>
+                </div>
+            </div>
+        </header>
+
+        <div class="admin-view-content">
+
+            <!-- TAB 1: OVERVIEW -->
+            <div class="admin-tab-pane active" id="tab-overview">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-info">
+                            <span>إجمالي الطلبات</span>
+                            <h3 id="stat-total-orders">0</h3>
+                        </div>
+                        <div class="stat-icon-wrapper blue">
+                            <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-info">
+                            <span>طلبات جديدة</span>
+                            <h3 id="stat-new-orders">0</h3>
+                        </div>
+                        <div class="stat-icon-wrapper yellow">
+                            <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-info">
+                            <span>قيد التنفيذ</span>
+                            <h3 id="stat-in-progress">0</h3>
+                        </div>
+                        <div class="stat-icon-wrapper purple">
+                            <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-info">
+                            <span>مكتملة</span>
+                            <h3 id="stat-completed-orders">0</h3>
+                        </div>
+                        <div class="stat-icon-wrapper green">
+                            <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="admin-card-box">
+                    <div class="card-box-header">
+                        <h3 style="font-size: 1.1rem; margin: 0;">أحدث الطلبات المسجلة</h3>
+                    </div>
+                    <p style="color: #64748b; font-size: 0.88rem;">
+                        توجه إلى تبويب "طلبات العملاء" في القائمة الجانبية لإدارة الحالات وتدوين الملاحظات والتواصل مع العملاء.
+                    </p>
+                </div>
+            </div>
+
+            <!-- TAB 2: ORDERS MANAGEMENT -->
+            <div class="admin-tab-pane" id="tab-orders">
+                <div class="admin-card-box">
+                    <div class="card-box-header">
+                        <h3 style="font-size: 1.15rem; margin: 0;">إدارة ومتابعة طلبات العملاء</h3>
+                        <div class="search-filter-bar">
+                            <input type="text" id="order-search-input" class="admin-search-input" placeholder="بحث بالاسم، الرقم، أو الخدمة..." oninput="filterOrders()">
+                            <select id="order-status-filter" class="admin-filter-select" onchange="filterOrders()">
+                                <option value="all">كافة الحالات</option>
+                                <option value="جديد">جديد</option>
+                                <option value="تمت المراجعة">تمت المراجعة</option>
+                                <option value="قيد التنفيذ">قيد التنفيذ</option>
+                                <option value="بانتظار معلومات من العميل">بانتظار معلومات</option>
+                                <option value="مكتمل">مكتمل</option>
+                                <option value="ملغي">ملغي</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="admin-table-responsive">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>رقم الطلب</th>
+                                    <th>اسم العميل</th>
+                                    <th>رقم الهاتف</th>
+                                    <th>الخدمة</th>
+                                    <th>الميزانية</th>
+                                    <th>الحالة</th>
+                                    <th>التاريخ</th>
+                                    <th>الإجراءات</th>
+                                </tr>
+                            </thead>
+                            <tbody id="orders-table-body">
+                                <tr><td colspan="8" style="text-align: center; padding: 2rem;">جاري التحميل...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 3: SERVICES -->
+            <div class="admin-tab-pane" id="tab-services">
+                <div class="admin-card-box">
+                    <div class="card-box-header">
+                        <h3 style="font-size: 1.15rem; margin: 0;">الخدمات المعروضة</h3>
+                    </div>
+                    <div id="admin-services-list">
+                        <!-- Loaded dynamically -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 4: PORTFOLIO -->
+            <div class="admin-tab-pane" id="tab-portfolio">
+                <div class="admin-card-box">
+                    <div class="card-box-header">
+                        <h3 style="font-size: 1.15rem; margin: 0;">إدارة سابقة الأعمال</h3>
+                    </div>
+                    <div id="admin-portfolio-list">
+                        <!-- Loaded dynamically -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 5: BLOG -->
+            <div class="admin-tab-pane" id="tab-blog">
+                <div class="admin-card-box">
+                    <div class="card-box-header">
+                        <h3 style="font-size: 1.15rem; margin: 0;">مقالات المدونة والـ SEO</h3>
+                    </div>
+                    <div id="admin-blog-list">
+                        <!-- Loaded dynamically -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 6: MESSAGES -->
+            <div class="admin-tab-pane" id="tab-messages">
+                <div class="admin-card-box">
+                    <div class="card-box-header">
+                        <h3 style="font-size: 1.15rem; margin: 0;">رسائل التواصل</h3>
+                    </div>
+                    <div id="admin-messages-list">
+                        <!-- Loaded dynamically -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 7: SETTINGS -->
+            <div class="admin-tab-pane" id="tab-settings">
+                <div class="admin-card-box" style="max-width: 650px;">
+                    <h3 style="font-size: 1.15rem; margin-bottom: 1.5rem;">إعدادات الموقع وبيانات التواصل</h3>
+                    <form onsubmit="saveSettings(event)">
+                        <div class="form-field">
+                            <label for="setting-whatsapp">رقم WhatsApp الرسمي (المربوط بالطلبات)</label>
+                            <input type="text" id="setting-whatsapp" dir="ltr" placeholder="+962790000000" required>
+                            <small style="color: #64748b; font-size: 0.8rem;">يتم تغيير هذا الرقم ليتم إرسال كافة طلبات العملاء إليه فورياً دون تعديل الكود.</small>
+                        </div>
+
+                        <div class="form-field">
+                            <label for="setting-site-name">اسم المنصة / الموقع</label>
+                            <input type="text" id="setting-site-name" placeholder="خدماتك الرقمية">
+                        </div>
+
+                        <div class="form-field">
+                            <label for="setting-email">البريد الإلكتروني الرسمي</label>
+                            <input type="email" id="setting-email" dir="ltr" placeholder="info@khadamatak.com">
+                        </div>
+
+                        <div class="form-field">
+                            <label for="setting-instagram">رابط Instagram</label>
+                            <input type="url" id="setting-instagram" dir="ltr" placeholder="https://instagram.com/khadamatak">
+                        </div>
+
+                        <div class="form-field" style="margin-bottom: 1.5rem;">
+                            <label for="setting-telegram">رابط Telegram</label>
+                            <input type="url" id="setting-telegram" dir="ltr" placeholder="https://t.me/khadamatak">
+                        </div>
+
+                        <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 1.25rem; margin-bottom: 1.5rem;">
+                            <h4 style="font-size: 1rem; font-weight: 800; margin: 0 0 0.5rem 0; color: #0f172a; display: flex; align-items: center; gap: 0.5rem;">
+                                <span>🔔 إعدادات إشعارات البريد الإلكتروني (Gmail)</span>
+                            </h4>
+                            <p style="color: #64748b; font-size: 0.82rem; line-height: 1.6; margin-bottom: 1rem;">
+                                تصلك إشعارات فورية بكافة بيانات ومرفقات وصور ورقم أي طلب جديد مباشرة إلى صندوق بريدك.
+                            </p>
+
+                            <div class="form-field">
+                                <label for="setting-gmail-user">حساب Gmail لاستقبال الإشعارات</label>
+                                <input type="email" id="setting-gmail-user" dir="ltr" placeholder="your-email@gmail.com">
+                            </div>
+
+                            <div class="form-field" style="margin-bottom: 0.5rem;">
+                                <label for="setting-gmail-password">كلمة مرور التطبيقات من Google (App Password)</label>
+                                <input type="password" id="setting-gmail-password" dir="ltr" placeholder="16-character Google App Password (xxxx xxxx xxxx xxxx)">
+                                <small style="color: #64748b; font-size: 0.78rem; display: block; margin-top: 0.35rem; line-height: 1.5;">
+                                    ⚠️ <strong>ملاحظة هامة:</strong> لا تضع كلمة سر حسابك العادية. بل ادخل على <a href="https://myaccount.google.com/apppasswords" target="_blank" style="color:#0284c7; font-weight:700; text-decoration:underline;">صفحة كلمات مرور التطبيقات من Google</a> وأنشئ كلمة مرور جديدة للموقع وانسخ الـ 16 حرفاً هنا.
+                                </small>
+                            </div>
+
+                            <div style="margin-top: 1rem; display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap;">
+                                <button type="button" class="btn btn-secondary btn-sm" id="btn-test-email" onclick="testEmailConnection()">
+                                    ✉️ فحص وإرسال بريد تجريبي للتأكد
+                                </button>
+                                <span id="test-email-status" style="font-size: 0.85rem; font-weight: 600;"></span>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary btn-lg">حفظ الإعدادات</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- TAB 8: SEO & PUBLISHING MASTER GUIDE -->
+            <div class="admin-tab-pane" id="tab-seo-guide">
+                <div class="admin-card-box">
+                    <h2 style="font-size: 1.3rem; font-weight: 800; margin-bottom: 0.5rem; color: #0f172a;">دليل نشر الموقع وتهيئة محركات البحث (Google Search Console & SEO)</h2>
+                    <p style="color: #64748b; font-size: 0.9rem; margin-bottom: 1.5rem;">
+                        دليل شامل خطوة بخطوة لشراء الدومين، ربط الاستضافة، إثبات الملكية في Google Search Console، وإرسال الـ Sitemap.
+                    </p>
+
+                    <div class="guide-step-card">
+                        <div class="guide-step-header">
+                            <h4><span>1. شراء اسم النطاق (Domain)</span></h4>
+                        </div>
+                        <div class="guide-step-body">
+                            قم بشراء اسم نطاق قصير وسهل التذكر (مثل <code>khadamatak.com</code> أو <code>khadamatak.jo</code>) من شركات معتمدة مثل Namecheap, GoDaddy, أو Cloudflare Registrar.
+                        </div>
+                    </div>
+
+                    <div class="guide-step-card">
+                        <div class="guide-step-header">
+                            <h4><span>2. ربط الدومين بالاستضافة وتفعيل HTTPS (SSL)</span></h4>
+                        </div>
+                        <div class="guide-step-body">
+                            - توجيه سجلات الـ DNS (سجل A وسجل CNAME) إلى عنوان IP الخاص بخادمك.<br>
+                            - تفعيل شهادة الأمان المجانية Let's Encrypt SSL ليعمل الموقع عبر <code>https://</code> الآمن.
+                        </div>
+                    </div>
+
+                    <div class="guide-step-card">
+                        <div class="guide-step-header">
+                            <h4><span>3. إنشاء حساب في Google Search Console وإثبات الملكية</span></h4>
+                        </div>
+                        <div class="guide-step-body">
+                            - توجه إلى <a href="https://search.google.com/search-console" target="_blank" style="color: #0284c7; text-decoration: underline;">Google Search Console</a>.<br>
+                            - اختر "Domain" وأدخل رابط موقعك.<br>
+                            - قم بإثبات الملكية عبر إضافة سجل <code>TXT</code> في DNS الدومين.
+                        </div>
+                    </div>
+
+                    <div class="guide-step-card">
+                        <div class="guide-step-header">
+                            <h4><span>4. إرسال خريطة الموقع (Sitemap.xml)</span></h4>
+                        </div>
+                        <div class="guide-step-body">
+                            الموقع يقوم بإنشاء خريطة موقع ديناميكية تلقائياً على الرابط <code>https://yourdomain.com/sitemap.xml</code>.<br>
+                            توجه إلى قسم "Sitemaps" في Google Search Console واكتب <code>sitemap.xml</code> ثم اضغط Submit.
+                        </div>
+                    </div>
+
+                    <div class="guide-step-card">
+                        <div class="guide-step-header">
+                            <h4><span>5. استخدام أداة فحص الروابط (URL Inspection) وطلب الفهرسة</span></h4>
+                        </div>
+                        <div class="guide-step-body">
+                            استخدم شريط البحث العلوي في Search Console لفحص روابط الصفحات والخدمات الجديدة، ثم اضغط على زر <strong>"Request Indexing"</strong>.
+                        </div>
+                    </div>
+
+                    <div class="guide-step-card">
+                        <div class="guide-step-header">
+                            <h4><span>6. إعداد الملف التجاري في Google Business Profile</span></h4>
+                        </div>
+                        <div class="guide-step-body">
+                            أنشئ حساباً على Google Business Profile بالاسم الحقيقي "خدماتك الرقمية"، وأضف الخدمات، رقم الواتساب، ورابط الموقع لزيادة الظهور في الخرائط المحلية في الأردن.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Modal تفاصيل وتعديل الطلب -->
+    <div class="modal-overlay" id="order-detail-modal">
+        <div class="modal-container">
+            <button class="modal-close" onclick="closeModal('order-detail-modal')">✕</button>
+            <h3 style="font-size: 1.25rem; margin-bottom: 1.25rem;">تفاصيل الطلب: <span id="modal-detail-id" style="color: #0284c7;"></span></h3>
+
+            <div style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 1rem; margin-bottom: 1.25rem; font-size: 0.88rem; line-height: 1.7;">
+                <div><strong>اسم العميل:</strong> <span id="modal-detail-name"></span></div>
+                <div><strong>رقم الهاتف:</strong> <span id="modal-detail-phone" dir="ltr"></span></div>
+                <div><strong>البريد:</strong> <span id="modal-detail-email"></span></div>
+                <div><strong>نوع الخدمة:</strong> <span id="modal-detail-service" style="color: #0284c7; font-weight: 700;"></span></div>
+                <div><strong>الميزانية التقريبية:</strong> <span id="modal-detail-budget"></span></div>
+                <div><strong>موعد التسليم:</strong> <span id="modal-detail-date"></span></div>
+                <div style="margin-top: 0.5rem; padding-top: 0.5rem; border-top: 1px solid #e2e8f0;">
+                    <strong>تفاصيل ووصف المشروع:</strong>
+                    <p id="modal-detail-text" style="color: #334155; margin-top: 0.25rem; white-space: pre-wrap;"></p>
+                </div>
+                <div style="margin-top: 0.5rem;">
+                    <strong>المرفقات:</strong>
+                    <div id="modal-detail-attachments" style="margin-top: 0.25rem;"></div>
+                </div>
+            </div>
+
+            <div class="form-field">
+                <label>حالة الطلب</label>
+                <select id="modal-order-status-select">
+                    <option value="جديد">جديد</option>
+                    <option value="تمت المراجعة">تمت المراجعة</option>
+                    <option value="قيد التنفيذ">قيد التنفيذ</option>
+                    <option value="بانتظار معلومات من العميل">بانتظار معلومات من العميل</option>
+                    <option value="مكتمل">مكتمل</option>
+                    <option value="ملغي">ملغي</option>
+                </select>
+            </div>
+
+            <div class="form-field" style="margin-bottom: 1.5rem;">
+                <label>ملاحظات داخلية (خاصة بالإدارة ولا تظهر للعميل)</label>
+                <textarea id="modal-order-internal-notes" placeholder="اكتب ملاحظاتك حول الاتفاق، الدفعات، أو المواعيد..."></textarea>
+            </div>
+
+            <div style="display: flex; gap: 0.75rem; justify-content: space-between;">
+                <a href="#" id="modal-detail-wa-btn" target="_blank" class="btn btn-secondary">مراسلة العميل WhatsApp</a>
+                <div style="display: flex; gap: 0.5rem;">
+                    <button onclick="closeModal('order-detail-modal')" class="btn btn-secondary">إلغاء</button>
+                    <button onclick="saveOrderChanges()" class="btn btn-primary">حفظ التغييرات</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="/js/admin.js"></script>
+</body>
+</html>

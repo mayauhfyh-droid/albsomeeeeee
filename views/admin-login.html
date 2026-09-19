@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تسجيل الدخول إلى لوحة التحكم — خدماتك الرقمية</title>
+    <meta name="robots" content="noindex, nofollow">
+    
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/admin.css">
+</head>
+<body class="admin-login-body">
+
+    <div class="login-card">
+        <div style="margin-bottom: 2rem;">
+            <div class="brand-text" style="justify-content: center; font-size: 1.3rem; margin-bottom: 1rem;">
+                <span>خدماتك الرقمية</span>
+                <span class="brand-dot"></span>
+            </div>
+            <h2 style="font-size: 1.25rem; font-weight: 800; margin-bottom: 0.35rem;">لوحة تحكم الإدارة</h2>
+            <p style="font-size: 0.85rem; color: #64748b;">سجل الدخول لإدارة الطلبات والخدمات والمحتوى</p>
+        </div>
+
+        <div id="login-error-alert" style="display: none; padding: 0.75rem; border: 1px solid #fecaca; background: #fef2f2; color: #dc2626; font-size: 0.85rem; margin-bottom: 1.25rem; text-align: center;"></div>
+
+        <form id="admin-login-form">
+            <div class="form-field" style="text-align: right;">
+                <label for="login-username">اسم المستخدم أو البريد الإلكتروني</label>
+                <input type="text" id="login-username" placeholder="admin" required autocomplete="username">
+            </div>
+
+            <div class="form-field" style="text-align: right; margin-bottom: 1.5rem;">
+                <label for="login-password">كلمة المرور</label>
+                <input type="password" id="login-password" placeholder="••••••••" required autocomplete="current-password">
+            </div>
+
+            <button type="submit" id="login-submit-btn" class="btn btn-primary btn-block btn-lg">
+                <span>تسجيل الدخول</span>
+            </button>
+        </form>
+
+        <div style="margin-top: 1.5rem; border-top: 1px solid #e2e8f0; padding-top: 1rem; font-size: 0.82rem; color: #64748b;">
+            <a href="/" style="color: #0f172a; font-weight: 600;">العودة للموقع الرئيسي</a>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('admin-login-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const username = document.getElementById('login-username').value.trim();
+            const password = document.getElementById('login-password').value.trim();
+            const errorAlert = document.getElementById('login-error-alert');
+            const submitBtn = document.getElementById('login-submit-btn');
+
+            errorAlert.style.display = 'none';
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = 'جاري التحقق...';
+
+            try {
+                const res = await fetch('/api/auth/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password })
+                });
+
+                const data = await res.json();
+                if (data.success) {
+                    window.location.href = '/admin';
+                } else {
+                    errorAlert.textContent = data.message || 'بيانات الدخول غير صحيحة';
+                    errorAlert.style.display = 'block';
+                }
+            } catch (err) {
+                errorAlert.textContent = 'تعذر الاتصال بالخادم.';
+                errorAlert.style.display = 'block';
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<span>تسجيل الدخول</span>';
+            }
+        });
+    </script>
+</body>
+</html>

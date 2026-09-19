@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 250" width="400" height="250" fill="none">
+  <rect width="400" height="250" fill="#f8fafc" />
+  <rect x="15" y="15" width="370" height="220" rx="6" fill="#ffffff" stroke="#e2e8f0" stroke-width="1.5" />
+  
+  <!-- Left Side Menu -->
+  <rect x="15" y="15" width="90" height="220" rx="6" fill="#f8fafc" />
+  <circle cx="35" cy="35" r="8" fill="#0284c7" />
+  <rect x="25" y="55" width="70" height="6" rx="2" fill="#0284c7" />
+  <rect x="25" y="72" width="55" height="6" rx="2" fill="#cbd5e1" />
+  <rect x="25" y="89" width="60" height="6" rx="2" fill="#cbd5e1" />
+  <rect x="25" y="106" width="50" height="6" rx="2" fill="#cbd5e1" />
+  
+  <!-- Main IDE / Dashboard Panel -->
+  <rect x="115" y="25" width="255" height="200" rx="4" fill="#ffffff" stroke="#e2e8f0" stroke-width="1" />
+  
+  <rect x="130" y="40" width="70" height="8" rx="2" fill="#0284c7" />
+  <rect x="130" y="56" width="150" height="6" rx="2" fill="#64748b" />
+  <rect x="145" y="70" width="110" height="6" rx="2" fill="#059669" />
+  <rect x="145" y="84" width="160" height="6" rx="2" fill="#64748b" />
+  
+  <!-- Chart Preview -->
+  <rect x="130" y="110" width="225" height="100" rx="4" fill="#f0f9ff" stroke="#bae6fd" stroke-width="1" />
+  <path d="M145 185 L180 150 L215 165 L260 130 L300 145 L335 125" stroke="#0284c7" stroke-width="2.5" fill="none" />
+  <circle cx="260" cy="130" r="4" fill="#0284c7" />
+</svg>

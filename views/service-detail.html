@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{SERVICE_TITLE}} — خدماتك الرقمية</title>
+    
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="{{SERVICE_SHORT_DESC}}">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="http://localhost:3000/services/{{SERVICE_SLUG}}">
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="article">
+    <meta property="og:title" content="{{SERVICE_TITLE}} — خدماتك الرقمية">
+    <meta property="og:description" content="{{SERVICE_SHORT_DESC}}">
+    <meta property="og:url" content="http://localhost:3000/services/{{SERVICE_SLUG}}">
+
+    <!-- Structured Data (JSON-LD) -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Service",
+      "serviceType": "{{SERVICE_TITLE}}",
+      "provider": {
+        "@type": "ProfessionalService",
+        "name": "خدماتك الرقمية"
+      },
+      "description": "{{SERVICE_SHORT_DESC}}",
+      "offers": {
+        "@type": "Offer",
+        "price": "{{SERVICE_PRICE}}"
+      }
+    }
+    </script>
+
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/seo-pages.css">
+</head>
+<body>
+
+    <!-- Header / Navbar -->
+    <header class="site-header">
+        <div class="container">
+            <nav class="navbar">
+                <a href="/" class="brand-text">
+                    <span>خدماتك الرقمية</span>
+                    <span class="brand-dot"></span>
+                </a>
+
+                <ul class="nav-menu" id="nav-menu">
+                    <li><a href="/" class="nav-link">الرئيسية</a></li>
+                    <li><a href="/services" class="nav-link active">الخدمات</a></li>
+                    <li><a href="/portfolio" class="nav-link">أعمالنا</a></li>
+                    <li><a href="/pricing" class="nav-link">الأسعار</a></li>
+                    <li><a href="/process" class="nav-link">طريقة العمل</a></li>
+                    <li><a href="/blog" class="nav-link">المدونة</a></li>
+                    <li><a href="/faq" class="nav-link">الأسئلة الشائعة</a></li>
+                    <li><a href="/contact" class="nav-link">تواصل معنا</a></li>
+                </ul>
+
+                <div class="nav-actions">
+                    <a href="/contact?service={{SERVICE_TITLE}}" class="btn btn-primary btn-sm">طلب الخدمة</a>
+                    <button class="mobile-menu-btn" id="mobile-menu-btn" aria-label="القائمة">
+                        <svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+                    </button>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Breadcrumbs -->
+    <div class="container">
+        <div class="breadcrumbs">
+            <a href="/">الرئيسية</a>
+            <span class="separator">/</span>
+            <a href="/services">الخدمات</a>
+            <span class="separator">/</span>
+            <span class="current">{{SERVICE_TITLE}}</span>
+        </div>
+    </div>
+
+    <!-- Service Header Hero -->
+    <section class="service-header-hero">
+        <div class="container">
+            <div class="service-hero-grid">
+                <div>
+                    <div class="service-price-tag">
+                        <span>السعر التقديري:</span>
+                        <strong>{{SERVICE_PRICE}}</strong>
+                    </div>
+                    <h1 style="font-size: 2.8rem; font-weight: 900; line-height: 1.2; margin-bottom: 1rem;">
+                        {{SERVICE_TITLE}}
+                    </h1>
+                    <p style="font-size: 1.1rem; color: var(--text-secondary); line-height: 1.8;">
+                        {{SERVICE_SHORT_DESC}}
+                    </p>
+                    <div style="margin-top: 2rem; display: flex; gap: 1rem; flex-wrap: wrap;">
+                        <a href="/contact?service={{SERVICE_TITLE}}" class="btn btn-primary btn-lg">طلب الخدمة فوراً</a>
+                        <a href="https://wa.me/962790000000?text=مرحباً،+أرغب+في+الاستفسار+عن+خدمة:+{{SERVICE_TITLE}}" target="_blank" class="btn btn-secondary btn-lg">استشارة عبر WhatsApp</a>
+                    </div>
+                </div>
+
+                <div class="page-hero-visual-card">
+                    <div class="page-hero-card-header">
+                        <div class="page-hero-card-dots">
+                            <span></span><span></span><span></span>
+                        </div>
+                        <span style="font-size: 0.75rem; color: var(--text-muted); font-family: monospace;">SPECIFICATIONS &amp; LIVE DEMO</span>
+                    </div>
+                    <div class="page-hero-img-wrap">
+                        <img src="{{SERVICE_IMAGE}}" alt="{{SERVICE_TITLE}}">
+                        <div class="page-hero-floating-badge">
+                            <span>تسليم فوري ومطابق للمواصفات</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Service Content Body -->
+    <section class="service-content-body">
+        <div class="container">
+            <div class="service-content-grid">
+                <div class="service-main-text">
+                    <h2>عن الخدمة والمميزات</h2>
+                    <p>{{SERVICE_FULL_DESC}}</p>
+
+                    <h3 style="margin-top: 2.5rem;">ماذا تتضمن هذه الخدمة؟</h3>
+                    <ul class="service-features-list" style="margin-top: 1rem; list-style: none; display: flex; flex-direction: column; gap: 0.75rem;">
+                        {{SERVICE_FEATURES_LIST}}
+                    </ul>
+
+                    <div class="article-cta-box" style="margin-top: 3.5rem; padding: 3rem; background: var(--bg-offwhite); border: 1px solid var(--border-light); border-radius: var(--radius-subtle); box-shadow: var(--shadow-sm); text-align: center;">
+                        <h3 style="font-size: 1.6rem; font-weight: 800; margin-bottom: 0.5rem;">هل أنت مستعد لبدء مشروعك؟</h3>
+                        <p style="color: var(--text-secondary); margin-bottom: 1.5rem; font-size: 0.95rem;">تواصل معنا اليوم وسنبدأ في تحويل فكرتك إلى واقع مميز.</p>
+                        <a href="/contact?service={{SERVICE_TITLE}}" class="btn btn-primary btn-lg">اطلب هذه الخدمة الآن</a>
+                    </div>
+                </div>
+
+                <div class="service-sidebar">
+                    <div class="sidebar-card">
+                        <h4 class="sidebar-card-title">خدمات أخرى قد تهمك</h4>
+                        <ul class="footer-col-links">
+                            <li><a href="/services/ecommerce-websites">مواقع المتاجر والمشاريع</a></li>
+                            <li><a href="/services/graduation-websites">مواقع التخرج الجامعي</a></li>
+                            <li><a href="/services/wedding-websites">دعوات الزفاف والخطوبة</a></li>
+                            <li><a href="/services/tawjihi-websites">مواقع التوجيهي والطلاب</a></li>
+                            <li><a href="/services/academic-programming">المشاريع البرمجية</a></li>
+                            <li><a href="/services/quiz-platforms">منصات الاختبارات والكويزات</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="sidebar-card" style="text-align: center;">
+                        <h4 class="sidebar-card-title">تواصل مباشر</h4>
+                        <p style="font-size: 0.88rem; color: var(--text-muted); margin-bottom: 1.25rem;">لأي استفسارات بخصوص الأسعار أو التفاصيل المخصصة.</p>
+                        <a href="https://wa.me/962790000000" target="_blank" class="btn btn-secondary btn-block">محادثة WhatsApp</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="site-footer">
+        <div class="container">
+            <div class="footer-top-grid">
+                <div>
+                    <a href="/" class="brand-text" style="margin-bottom: 1.25rem;">
+                        <span>خدماتك الرقمية</span>
+                        <span class="brand-dot"></span>
+                    </a>
+                    <p style="font-size: 0.92rem; color: var(--text-secondary); max-width: 320px; line-height: 1.7;">
+                        استوديو رقمي عربي مستقل. نبني مواقع إلكترونية وحلولاً برمجية متقنة تمنحك حضوراً واثقاً ومميزاً على الإنترنت.
+                    </p>
+                </div>
+                <div>
+                    <div class="footer-col-title">الصفحات</div>
+                    <ul class="footer-col-links">
+                        <li><a href="/">الرئيسية</a></li>
+                        <li><a href="/services">كافة الخدمات</a></li>
+                        <li><a href="/portfolio">معرض الأعمال</a></li>
+                        <li><a href="/pricing">باقات الأسعار</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <div class="footer-col-title">عن الاستوديو</div>
+                    <ul class="footer-col-links">
+                        <li><a href="/process">طريقة العمل</a></li>
+                        <li><a href="/faq">الأسئلة الشائعة</a></li>
+                        <li><a href="/blog">المدونة والتقارير</a></li>
+                        <li><a href="/contact">طلب مشروع جديد</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <div class="footer-col-title">تواصل مباشر</div>
+                    <ul class="footer-col-links">
+                        <li><a href="https://wa.me/962790000000" id="footer-whatsapp-link" target="_blank">محادثة واتساب مباشرة</a></li>
+                        <li><a href="/contact">إرسال استفسار عبر الموقع</a></li>
+                        <li><span style="font-size: 0.85rem; color: var(--text-muted);">عمان، المملكة الأردنية الهاشمية</span></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="footer-bottom-row">
+                <div>&copy; 2026 خدماتك الرقمية — جميع الحقوق محفوظة.</div>
+                <div>تصميم وبرمجة مخصصة بدون قوالب جاهزة.</div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Floating WhatsApp -->
+    <a href="https://wa.me/962790000000" class="floating-whatsapp" id="floating-whatsapp" target="_blank" aria-label="تواصل عبر واتساب">
+        <svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24"><path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.711 2.598 2.669-.699c.969.54 1.771.82 2.791.82 3.181 0 5.767-2.586 5.768-5.766 0-3.18-2.586-5.766-5.768-5.766zm9.969 5.766c0 5.518-4.482 10-10 10-1.748 0-3.385-.45-4.819-1.238l-7.181 1.88 1.914-6.994c-.876-1.492-1.384-3.23-1.384-5.088 0-5.518 4.482-10 10-10 5.518 0 10 4.482 10 10z"/></svg>
+        <span>محادثة واتساب</span>
+    </a>
+
+    <script src="/js/main.js"></script>
+</body>
+</html>

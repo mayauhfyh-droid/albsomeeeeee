@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>خدماتك الرقمية — استوديو تصميم وتطوير مواقع الويب</title>
+    
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="نصمم ونطور تجارب رقمية للمتاجر، المشاريع الصغيرة، حفلات التخرج، دعوات الزفاف الإلكترونية، والحلول البرمجية التي تستحق حضورًا مميزًا على الإنترنت.">
+    <meta name="keywords" content="تصميم مواقع, برمجة ويب, دعوة زفاف الكترونية, موقع تخرج, مشاريع تخرج برمجة, كوزات تفاعلية, متجر الكتروني, استوديو رقمي">
+    <meta name="author" content="خدماتك الرقمية">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="http://localhost:3000/">
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="http://localhost:3000/">
+    <meta property="og:title" content="خدماتك الرقمية — استوديو تصميم وتطوير مواقع الويب">
+    <meta property="og:description" content="نصنع مواقع تستحق أن تُرى. تجارب رقمية للمشاريع والمناسبات والأفكار الطموحة.">
+    <meta property="og:image" content="http://localhost:3000/assets/hero-mockup.svg">
+
+    <!-- Structured Data (JSON-LD) -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "ProfessionalService",
+      "name": "خدماتك الرقمية",
+      "url": "http://localhost:3000",
+      "telephone": "+962790000000",
+      "priceRange": "$$",
+      "address": {
+        "@type": "PostalAddress",
+        "addressCountry": "JO"
+      },
+      "description": "استوديو رقمي متخصص في تصميم وتطوير مواقع الويب والمشاريع البرمجية والدعوات الرقمية."
+    }
+    </script>
+
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="/css/style.css?v=2.5">
+</head>
+<body>
+
+    <!-- 1. شريط التنقل العلوي (Minimal Navbar) -->
+    <header class="site-header">
+        <div class="container">
+            <nav class="navbar">
+                <a href="/" class="brand-text">
+                    <span>خدماتك الرقمية</span>
+                    <span class="brand-dot"></span>
+                </a>
+
+                <ul class="nav-menu" id="nav-menu">
+                    <li><a href="/" class="nav-link active">الرئيسية</a></li>
+                    <li><a href="/services" class="nav-link">الخدمات</a></li>
+                    <li><a href="/portfolio" class="nav-link">أعمالنا</a></li>
+                    <li><a href="/pricing" class="nav-link">الأسعار</a></li>
+                    <li><a href="/process" class="nav-link">طريقة العمل</a></li>
+                    <li><a href="/blog" class="nav-link">المدونة</a></li>
+                    <li><a href="/faq" class="nav-link">الأسئلة الشائعة</a></li>
+                    <li><a href="/contact" class="nav-link">تواصل معنا</a></li>
+                </ul>
+
+                <div class="nav-actions">
+                    <a href="/contact" class="btn btn-primary btn-sm">ابدأ مشروعك</a>
+                    <button class="mobile-menu-btn" id="mobile-menu-btn" aria-label="القائمة">
+                        <svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+                    </button>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <!-- 2. القسم الافتتاحي على كامل الشاشة (Full-Screen Hero Section) -->
+    <section class="hero-fullscreen-section" id="hero">
+        <div class="container" style="display: flex; flex-direction: column; justify-content: space-between; min-height: 100%;">
+            <div>
+                <div class="hero-fs-badge">
+                    <span>استوديو تصميم وبرمجة رقمية — 2026</span>
+                </div>
+
+                <h1 class="hero-headline-fs">
+                    نصنع مواقع<br>
+                    تستحق أن تُرى.
+                </h1>
+
+                <p class="hero-subtext-fs">
+                    نصمم ونطور تجارب رقمية فاخرة للمتاجر، حفلات التخرج، دعوات الزفاف الإلكترونية، والحلول البرمجية التي تمنحك حضوراً واثقاً ومميزاً على الإنترنت بدون قوالب مكررة.
+                </p>
+
+                <div class="hero-cta-group-fs">
+                    <a href="/contact" class="btn-fs-primary">ابدأ مشروعك الآن</a>
+                    <a href="https://graduationnnn.netlify.app" target="_blank" class="btn-fs-secondary">معاينة موقع التوجيهي والتخرج ↗</a>
+                    <a href="/portfolio" class="btn-fs-secondary">معرض أعمالنا</a>
+                </div>
+            </div>
+
+            <!-- Bottom 4-Card Live Showcase Strip inside Fullscreen Hero -->
+            <div style="margin-top: 2rem;">
+                <div style="font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: #94a3b8; margin-bottom: 0.85rem; display: flex; align-items: center; gap: 0.5rem;">
+                    <span style="display: inline-block; width: 8px; height: 8px; background: #10b981; border-radius: 50%;"></span>
+                    <span>معاينات حية وتجارب تفاعلية فورية لمشاريعنا:</span>
+                </div>
+                <div class="hero-fs-strip">
+                    <!-- Card 1 -->
+                    <div class="hero-fs-card">
+                        <div>
+                            <div class="hero-fs-card-tag">
+                                <span>توجيهي وتخرج</span>
+                                <span style="color:#10b981;">● نشط الآن</span>
+                            </div>
+                            <div class="hero-fs-card-title">موقع احتفال التوجيهي والتخرج</div>
+                            <div class="hero-fs-card-desc">ختم شمعي، سجل تهاني حي، ومؤثرات احتفالية.</div>
+                        </div>
+                        <a href="https://graduationnnn.netlify.app" target="_blank" class="hero-fs-card-action">
+                            <span>معاينة الموقع الفعلي</span>
+                            <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                        </a>
+                    </div>
+
+                    <!-- Card 2 -->
+                    <div class="hero-fs-card">
+                        <div>
+                            <div class="hero-fs-card-tag">
+                                <span>دعوات وزفاف</span>
+                                <span style="color:#10b981;">● تجربة حية</span>
+                            </div>
+                            <div class="hero-fs-card-title">دعوة زفاف ملكية فاخرة</div>
+                            <div class="hero-fs-card-desc">تأكيد حضور فوري (RSVP) وخريطة الصالة.</div>
+                        </div>
+                        <a href="/demos/wedding" target="_blank" class="hero-fs-card-action">
+                            <span>معاينة حية للدعوة</span>
+                            <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                        </a>
+                    </div>
+
+                    <!-- Card 3 -->
+                    <div class="hero-fs-card">
+                        <div>
+                            <div class="hero-fs-card-tag">
+                                <span>متاجر ومشاريع</span>
+                                <span style="color:#10b981;">● متجر متكامل</span>
+                            </div>
+                            <div class="hero-fs-card-title">متجر إلكتروني بوتيك</div>
+                            <div class="hero-fs-card-desc">سلة مشتريات وطلب تلقائي عبر واتساب.</div>
+                        </div>
+                        <a href="/demos/store" target="_blank" class="hero-fs-card-action">
+                            <span>معاينة حية للمتجر</span>
+                            <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                        </a>
+                    </div>
+
+                    <!-- Card 4 -->
+                    <div class="hero-fs-card">
+                        <div>
+                            <div class="hero-fs-card-tag">
+                                <span>اختبارات وكويزات</span>
+                                <span style="color:#10b981;">● تصحيح فوري</span>
+                            </div>
+                            <div class="hero-fs-card-title">منصة كويزات تفاعلية</div>
+                            <div class="hero-fs-card-desc">نظام اختبارات ذكي مع مؤقت واحتساب درجات.</div>
+                        </div>
+                        <a href="/demos/quiz" target="_blank" class="hero-fs-card-action">
+                            <span>معاينة الاختبار الحي</span>
+                            <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 2.5. شريط إحصائيات الثقة والإنجاز (Trust & Metrics Strip) -->
+    <section class="stats-strip-section">
+        <div class="container">
+            <div class="stats-strip-grid">
+                <div class="stat-card">
+                    <div class="stat-number">
+                        <span>+120</span>
+                        <span class="stat-number-accent">✓</span>
+                    </div>
+                    <div class="stat-label">مشروع وموقع مُنجز</div>
+                    <div class="stat-subtext">أطلقناها بنجاح للأفراد والمشاريع</div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-number">
+                        <span>48</span>
+                        <span style="font-size: 1.5rem; font-weight: 700; color: var(--text-secondary);">ساعة</span>
+                    </div>
+                    <div class="stat-label">تسليم قياسي سريع</div>
+                    <div class="stat-subtext">للمواقع الاحتفالية ودعوات الزفاف</div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-number">
+                        <span>99</span>
+                        <span style="font-size: 1.5rem; font-weight: 700; color: var(--text-secondary);">/100</span>
+                    </div>
+                    <div class="stat-label">سرعة وتوافق الأجهزة</div>
+                    <div class="stat-subtext">وفق معايير Google Core Web Vitals</div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-number">
+                        <span>5.0</span>
+                        <span style="font-size: 1.5rem; color: #f59e0b;">★</span>
+                    </div>
+                    <div class="stat-label">تقييم رضا العملاء</div>
+                    <div class="stat-subtext">دعم ومتابعة مستمرة بعد التسليم</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 3. معاييرنا وقيمنا (Philosophy & Values) -->
+    <section class="philosophy-section">
+        <div class="container">
+            <div class="section-editorial-header">
+                <div>
+                    <h2 class="section-editorial-title">فلسفتنا في البناء</h2>
+                </div>
+                <div class="section-editorial-note">
+                    نؤمن أن الموقع الإلكتروني هو واجهتك الأساسية التي تعكس قيمتك الحقيقية.
+                </div>
+            </div>
+
+            <div class="philosophy-grid">
+                <div class="philosophy-item">
+                    <div class="philosophy-num">01 / PHILOSOPHY</div>
+                    <div class="philosophy-title">تصميم إنساني فريد</div>
+                    <div class="philosophy-desc">نبتعد عن القوالب المكررة والذكاء الاصطناعي السطحي، لنبني هوية بصرية مخصصة تليق بمشروعك ومناسبتك.</div>
+                </div>
+
+                <div class="philosophy-item">
+                    <div class="philosophy-num">02 / PHILOSOPHY</div>
+                    <div class="philosophy-title">سرعة وأداء حقيقي</div>
+                    <div class="philosophy-desc">كود نظيف خفيف الوزن ومُهيكل هندسيًا ليعمل بسرعة فائقة على كافة الهواتف والحواسيب بدون بطء أو تعقيد.</div>
+                </div>
+
+                <div class="philosophy-item">
+                    <div class="philosophy-num">03 / PHILOSOPHY</div>
+                    <div class="philosophy-title">تكامل عملي فوري</div>
+                    <div class="philosophy-desc">نربط موقعك مباشرة مع WhatsApp ونماذج الطلب الذكية لتستقبل استفسارات ومبيعات عملائك بكل سهولة.</div>
+                </div>
+            </div>
+
+            <!-- Studio Manifesto Visual Banner -->
+            <div class="studio-manifesto-banner">
+                <div class="studio-manifesto-img">
+                    <img src="/images/studio-workspace.jpg" alt="فريق استوديو خدماتك الرقمية">
+                </div>
+                <div class="studio-manifesto-text">
+                    <div style="font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-muted); margin-bottom: 0.5rem;">CRAFTED WITH PRECISION</div>
+                    <h3>هندسة رقمية تواكب المعايير العالمية</h3>
+                    <p>
+                        كل مشروع نعمل عليه يحظى باهتمام تفصيلي يبدأ من دراسة احتياجك، واختيار الخطوط والألوان المناسبة، وحتى اختبار السرعة والتوافق التام على شاشات الجوال والحواسيب.
+                    </p>
+                    <div>
+                        <a href="/process" class="btn btn-secondary btn-sm">تعرف على منهجية عملنا</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 4. مقتطفات من الخدمات (Featured Services Spotlight) -->
+    <section class="services-section">
+        <div class="container">
+            <div class="section-editorial-header">
+                <div>
+                    <h2 class="section-editorial-title">أبرز خدماتنا</h2>
+                </div>
+                <div class="section-editorial-note">
+                    نقدم 9 خدمات رقمية متخصصة للأفراد والمشاريع والطلاب.
+                </div>
+            </div>
+
+            <div class="services-editorial-list">
+                <!-- 01 -->
+                <div class="service-row-item">
+                    <div class="service-row-num">01</div>
+                    <div class="service-row-thumb">
+                        <img src="/images/service-store.jpg" alt="مواقع المتاجر والمشاريع">
+                    </div>
+                    <div>
+                        <div class="service-row-title">مواقع المتاجر والمشاريع الصغيرة</div>
+                        <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.25rem;">متجر متكامل وسريع</div>
+                    </div>
+                    <div class="service-row-desc">موقع لعرض منتجات وخدمات مشروعك مع سلة طلبات وتسهيل استقبال العملاء عبر الواتساب.</div>
+                    <div class="service-row-price">20 - 25 د.أ</div>
+                    <div class="service-row-action">
+                        <a href="/services/small-business-websites" class="btn btn-secondary btn-sm">التفاصيل</a>
+                    </div>
+                </div>
+
+                <!-- 02 -->
+                <div class="service-row-item">
+                    <div class="service-row-num">02</div>
+                    <div class="service-row-thumb">
+                        <img src="/images/service-grad.jpg" alt="مواقع التخرج الجامعي">
+                    </div>
+                    <div>
+                        <div class="service-row-title">مواقع التخرج الجامعي والتوجيهي</div>
+                        <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.25rem;">توثيق وسجل تهاني</div>
+                    </div>
+                    <div class="service-row-desc">صفحة توثق مسيرتك الجامعية مع ألبوم الصور وسجل التهاني التفاعلي من الأهل والأصدقاء.</div>
+                    <div class="service-row-price">10 د.أ فقط</div>
+                    <div class="service-row-action">
+                        <a href="/services/graduation-websites" class="btn btn-secondary btn-sm">التفاصيل</a>
+                    </div>
+                </div>
+
+                <!-- 03 -->
+                <div class="service-row-item">
+                    <div class="service-row-num">03</div>
+                    <div class="service-row-thumb">
+                        <img src="/images/service-wedding.jpg" alt="دعوات الزفاف والخطوبة">
+                    </div>
+                    <div>
+                        <div class="service-row-title">دعوات الزفاف والخطوبة الإلكترونية</div>
+                        <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.25rem;">دعوة ملكية تفاعلية</div>
+                    </div>
+                    <div class="service-row-desc">دعوة تفاعلية فاخرة مع تأكيد الحضور (RSVP)، عداد تنازلي، وخريطة الصالة المباشرة.</div>
+                    <div class="service-row-price">12 - 15 د.أ</div>
+                    <div class="service-row-action">
+                        <a href="/services/wedding-websites" class="btn btn-secondary btn-sm">التفاصيل</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Link to full services page -->
+            <div style="margin-top: 3.5rem; text-align: center;">
+                <a href="/services" class="btn btn-primary btn-lg">
+                    <span>استعراض كافة الخدمات (9 خدمات متاحة)</span>
+                    <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- 4.5. حاسبة تقدير التكلفة الفورية التفاعلية (Live Project Cost Estimator) -->
+    <section class="estimator-section" id="estimator">
+        <div class="container">
+            <div class="section-editorial-header">
+                <div>
+                    <h2 class="section-editorial-title">حاسبة تقدير المشروع التفاعلية</h2>
+                </div>
+                <div class="section-editorial-note">
+                    اختر مواصفات موقعك واحصل على تقدير فوري ومباشر في ثوانٍ.
+                </div>
+            </div>
+
+            <div class="estimator-card">
+                <!-- Controls Column -->
+                <div>
+                    <!-- Step 1 -->
+                    <div class="estimator-step-title">
+                        <span class="estimator-step-badge">1</span>
+                        <span>اختر نوع المشروع أو المنصة المطلوبة:</span>
+                    </div>
+                    <div class="pill-grid" id="estimator-service-pills">
+                        <button type="button" class="pill-btn active" data-price="20" data-name="موقع متجر / شركة صغيرة">
+                            <span>🛍️ متجر / شركة صغيرة</span>
+                            <span class="pill-price-tag">20 د.أ</span>
+                        </button>
+                        <button type="button" class="pill-btn" data-price="10" data-name="موقع تخرج واحتفال توجيهي">
+                            <span>🎓 موقع تخرج / توجيهي</span>
+                            <span class="pill-price-tag">10 د.أ</span>
+                        </button>
+                        <button type="button" class="pill-btn" data-price="12" data-name="دعوة زفاف إلكترونية ملكية">
+                            <span>💍 دعوة زفاف ملكية</span>
+                            <span class="pill-price-tag">12 د.أ</span>
+                        </button>
+                        <button type="button" class="pill-btn" data-price="15" data-name="مشروع برمجي أو كويز تفاعلي">
+                            <span>💻 مشروع كود / كويز</span>
+                            <span class="pill-price-tag">15 د.أ</span>
+                        </button>
+                    </div>
+
+                    <!-- Step 2 -->
+                    <div class="estimator-step-title">
+                        <span class="estimator-step-badge">2</span>
+                        <span>سرعة الإنجاز والتسليم:</span>
+                    </div>
+                    <div class="pill-grid" id="estimator-speed-pills">
+                        <button type="button" class="pill-btn active" data-price="0" data-speed="عادي (3-5 أيام)">
+                            <span>⚡ تسليم قياسي (3-5 أيام)</span>
+                            <span class="pill-price-tag">مجاناً</span>
+                        </button>
+                        <button type="button" class="pill-btn" data-price="2" data-speed="فوري VIP (خلال 48 ساعة)">
+                            <span>🚀 تسليم عاجل VIP (48 ساعة)</span>
+                            <span class="pill-price-tag">+2 د.أ</span>
+                        </button>
+                    </div>
+
+                    <!-- Step 3 -->
+                    <div class="estimator-step-title">
+                        <span class="estimator-step-badge">3</span>
+                        <span>ميزات وترقيات اختيارية:</span>
+                    </div>
+                    <div id="estimator-addons-list">
+                        <label class="addon-checkbox-label">
+                            <span style="display:flex;align-items:center;gap:0.6rem;">
+                                <input type="checkbox" class="estimator-addon-check" data-price="5" data-name="دومين .com رسمي مخصص">
+                                <span>حجز وربط دومين رسمي مخصص (.com)</span>
+                            </span>
+                            <span class="pill-price-tag">+5 د.أ</span>
+                        </label>
+                        <label class="addon-checkbox-label">
+                            <span style="display:flex;align-items:center;gap:0.6rem;">
+                                <input type="checkbox" class="estimator-addon-check" data-price="1" data-name="ربط تلقائي بالواتساب والإشعارات" checked>
+                                <span>ربط مباشر وفوري بإشعارات WhatsApp</span>
+                            </span>
+                            <span class="pill-price-tag">+1 د.أ</span>
+                        </label>
+                        <label class="addon-checkbox-label">
+                            <span style="display:flex;align-items:center;gap:0.6rem;">
+                                <input type="checkbox" class="estimator-addon-check" data-price="2" data-name="سجل تفاعلي وتأكيد حضور RSVP">
+                                <span>نظام RSVP تفاعلي / سجل تهاني وتبريكات حي</span>
+                            </span>
+                            <span class="pill-price-tag">+2 د.أ</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Summary Column -->
+                <div class="estimator-summary-box">
+                    <div>
+                        <div class="estimator-total-label">التقدير الإجمالي التقريبي</div>
+                        <div class="estimator-total-amount">
+                            <span id="estimator-total-display">21</span>
+                            <span class="currency">دينار أردني</span>
+                        </div>
+
+                        <ul class="estimator-includes-list">
+                            <li>
+                                <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg>
+                                <span id="est-summary-service">موقع متجر / مشروع صغير</span>
+                            </li>
+                            <li>
+                                <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg>
+                                <span id="est-summary-speed">تسليم قياسي (4-6 أيام)</span>
+                            </li>
+                            <li>
+                                <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg>
+                                <span>استضافة سريعة مشمولة وشهادة أمان SSL مجانية</span>
+                            </li>
+                            <li>
+                                <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg>
+                                <span>تصميم متجاوب 100% مع كافة الهواتف والشاشات</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div>
+                        <a href="https://wa.me/962790000000" id="estimator-whatsapp-order-btn" class="btn btn-primary btn-block" style="padding: 1rem; font-size: 1rem; font-weight: 800;" target="_blank">
+                            <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.711 2.598 2.664-.699c.971.53 1.77.813 2.796.814 3.179 0 5.767-2.587 5.768-5.766 0-3.18-2.587-5.768-5.768-5.768zm3.364 8.16c-.14.394-.81.767-1.127.813-.318.046-.731.066-2.146-.516-1.706-.702-2.796-2.457-2.881-2.57-.085-.114-.689-.916-.689-1.747 0-.831.438-1.24.594-1.409.155-.169.339-.211.452-.211.113 0 .226 0 .325.006.103.006.24.019.349.279.113.268.395.962.43 1.032.035.07.058.152.012.245-.046.093-.07.151-.14.233-.07.081-.148.181-.211.243-.07.07-.144.146-.062.287.082.141.365.602.784.974.54.481.996.63 1.137.7.141.07.225.059.31-.039.084-.099.366-.424.464-.57.099-.147.197-.122.338-.07.141.052.898.423 1.053.5.155.078.258.117.296.183.038.066.038.384-.102.778z"/></svg>
+                            <span>اطلب مشروعك بهذا السعر عبر واتساب</span>
+                        </a>
+                        <div style="font-size: 0.78rem; text-align: center; color: var(--text-muted); margin-top: 0.6rem;">
+                            🔒 التكلفة نهائية وشفافة بدون أي رسوم خفية.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 5. مقتطفات من أعمالنا (Featured Portfolio Works) -->
+    <section class="portfolio-section" style="background-color: var(--bg-offwhite);">
+        <div class="container">
+            <div class="section-editorial-header">
+                <div>
+                    <h2 class="section-editorial-title">نماذج من أعمالنا</h2>
+                </div>
+                <div class="section-editorial-note">
+                    تصفح عينات من المشاريع والتجارب الرقمية المنفذة مؤخراً.
+                </div>
+            </div>
+
+            <div class="portfolio-editorial-grid">
+                <div class="work-card">
+                    <div class="work-preview-wrap">
+                        <img src="/images/portfolio-store.jpg" alt="متجر إليجانس للعطور">
+                    </div>
+                    <div class="work-meta-row">
+                        <span>متاجر ومشاريع</span>
+                        <span>2026</span>
+                    </div>
+                    <h3 class="work-title">متجر إليجانس للعطور الفاخرة</h3>
+                    <p class="work-desc">موقع متجر متكامل لعرض المنتجات مع سلة مشتريات وتوجيه فوري للطلبات عبر WhatsApp.</p>
+                    <div style="display: flex; gap: 0.5rem; margin-top: 0.5rem;">
+                        <a href="/demos/store" target="_blank" class="btn btn-primary btn-sm">معاينة حية للمتجر ↗</a>
+                        <a href="/contact?service=مواقع+المتاجر+والمشاريع+الصغيرة" class="btn btn-secondary btn-sm">طلب مماثل</a>
+                    </div>
+                </div>
+
+                <div class="work-card">
+                    <div class="work-preview-wrap">
+                        <img src="/images/portfolio-grad.jpg" alt="منصة تخرج وتوجيهي تفاعلية">
+                    </div>
+                    <div class="work-meta-row">
+                        <span>توجيهي وتخرج</span>
+                        <span>2026</span>
+                    </div>
+                    <h3 class="work-title">منصة تخرج واحتفال توجيهي ملكية</h3>
+                    <p class="work-desc">دعوة تخرج واحتفال توجيهي بختم شمعي تفاعلي، سجل تهاني حي، ومؤثرات احتفالية.</p>
+                    <div style="display: flex; gap: 0.5rem; margin-top: 0.5rem;">
+                        <a href="https://graduationnnn.netlify.app" target="_blank" class="btn btn-primary btn-sm">معاينة حية للموقع ↗</a>
+                        <a href="/contact?service=مواقع+التخرج+الجامعي" class="btn btn-secondary btn-sm">طلب مماثل</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Link to full portfolio page -->
+            <div style="margin-top: 3.5rem; text-align: center;">
+                <a href="/portfolio" class="btn btn-secondary btn-lg">
+                    <span>استعراض معرض الأعمال الكامل</span>
+                    <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- 5.5. تجارب وآراء العملاء (Client Testimonials & Trust) -->
+    <section class="testimonials-section">
+        <div class="container">
+            <div class="section-editorial-header">
+                <div>
+                    <h2 class="section-editorial-title">ماذا يقول عملاؤنا؟</h2>
+                </div>
+                <div class="section-editorial-note">
+                    تجارب حقيقية لعملاء وثقوا بنا في مناسباتهم ومشاريعهم الرقمية.
+                </div>
+            </div>
+
+            <div class="testimonials-grid">
+                <!-- Testimonial 1 -->
+                <div class="testimonial-card">
+                    <div>
+                        <div class="testimonial-stars">★★★★★</div>
+                        <p class="testimonial-quote">
+                            "موقع التخرج كان أكثر من رائع! الأهل والأصدقاء تفاعلوا بشكل كبير مع سجل التهاني والختم الشمعي. تم التسليم خلال أقل من 48 ساعة وبقمة الاحترافية."
+                        </p>
+                    </div>
+                    <div class="testimonial-author-row">
+                        <div>
+                            <div class="testimonial-author-name">أسامة خليل</div>
+                            <div style="font-size: 0.78rem; color: var(--text-muted);">عمان، الأردن</div>
+                        </div>
+                        <span class="testimonial-project-badge">موقع تخرج توجيهي</span>
+                    </div>
+                </div>
+
+                <!-- Testimonial 2 -->
+                <div class="testimonial-card">
+                    <div>
+                        <div class="testimonial-stars">★★★★★</div>
+                        <p class="testimonial-quote">
+                            "خدمة تأكيد الحضور (RSVP) وخريطة الصالة في دعوة الزفاف وفرت علينا وقتاً وجهداً كبيراً. التصميم كان ملكياً وفاخراً جداً بدون أي تعقيد."
+                        </p>
+                    </div>
+                    <div class="testimonial-author-row">
+                        <div>
+                            <div class="testimonial-author-name">سارة المجالي</div>
+                            <div style="font-size: 0.78rem; color: var(--text-muted);">إربد، الأردن</div>
+                        </div>
+                        <span class="testimonial-project-badge">دعوة زفاف إلكترونية</span>
+                    </div>
+                </div>
+
+                <!-- Testimonial 3 -->
+                <div class="testimonial-card">
+                    <div>
+                        <div class="testimonial-stars">★★★★★</div>
+                        <p class="testimonial-quote">
+                            "المتجر الإلكتروني سريع جداً على الجوال، وربط سلة المشتريات بالواتساب ساعدنا في إغلاق المبيعات وتأكيد طلبات الزبائن مباشرة وبسهولة."
+                        </p>
+                    </div>
+                    <div class="testimonial-author-row">
+                        <div>
+                            <div class="testimonial-author-name">م. عمر الطراونة</div>
+                            <div style="font-size: 0.78rem; color: var(--text-muted);">مشروع بوتيك وعطور</div>
+                        </div>
+                        <span class="testimonial-project-badge">متجر إلكتروني</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 6. مقتطف طريقة العمل (Workflow Teaser) -->
+    <section class="process-section">
+        <div class="container">
+            <div class="section-editorial-header">
+                <div>
+                    <h2 class="section-editorial-title">كيف نعمل؟</h2>
+                </div>
+                <div class="section-editorial-note">
+                    منهجية من 5 خطوات واضحة ومحددة تضمن إنجاز مشروعك بسلاسة.
+                </div>
+            </div>
+
+            <div class="process-steps-grid">
+                <div class="process-step-item">
+                    <div class="process-step-num">01 / STEP</div>
+                    <div class="process-step-title">الاستكشاف والتخطيط</div>
+                    <div class="process-step-desc">نحدد الأهداف، بنية الصفحات، والمحتوى المطلوب بدقة.</div>
+                </div>
+                <div class="process-step-item">
+                    <div class="process-step-num">02 / STEP</div>
+                    <div class="process-step-title">التصميم والهيكلة</div>
+                    <div class="process-step-desc">تصميم واجهات عصرية متجاوبة بأعلى معايير UI/UX.</div>
+                </div>
+                <div class="process-step-item">
+                    <div class="process-step-num">03 / STEP</div>
+                    <div class="process-step-title">البرمجة والتطوير</div>
+                    <div class="process-step-desc">كتابة كود نظيف وسريع مع ربط قواعد البيانات وواتساب.</div>
+                </div>
+                <div class="process-step-item">
+                    <div class="process-step-num">04 / STEP</div>
+                    <div class="process-step-title">فحص الجودة والسرعة</div>
+                    <div class="process-step-desc">اختبار شامل على كافة الشاشات والمتصفحات.</div>
+                </div>
+                <div class="process-step-item">
+                    <div class="process-step-num">05 / STEP</div>
+                    <div class="process-step-title">الإطلاق والتسليم</div>
+                    <div class="process-step-desc">ربط الدومين وتفعيل شهادة SSL مع تدريب كامل.</div>
+                </div>
+            </div>
+
+            <div style="margin-top: 3.5rem; text-align: center;">
+                <a href="/process" class="btn btn-secondary btn-lg">
+                    <span>اكتشف تفاصيل منهجية عملنا</span>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- 7. شريط الدعوة الرئيسي (Final Call to Action Banner) -->
+    <section style="padding: 6rem 0; background: var(--text-primary); color: #ffffff;">
+        <div class="container" style="text-align: center;">
+            <div style="font-size: 0.82rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: #a3a3a3; margin-bottom: 1rem;">جاهز لإطلاق موقعك؟</div>
+            <h2 style="font-size: 3rem; font-weight: 900; color: #ffffff; margin-bottom: 1.5rem; letter-spacing: -0.02em;">
+                دعنا نبني تجربة رقمية تليق بطموحك.
+            </h2>
+            <p style="font-size: 1.15rem; color: #d4d4d4; max-width: 600px; margin: 0 auto 2.5rem auto; line-height: 1.8;">
+                تواصل معنا اليوم وسنبدأ في دراسة مشروعك وتقديم عرض سعر ونموذج أولي خلال ساعات قليلة.
+            </p>
+            <div style="display: flex; justify-content: center; gap: 1.25rem; flex-wrap: wrap;">
+                <a href="/contact" class="btn btn-lg" style="background: #ffffff; color: #111111; border-color: #ffffff; font-weight: 700;">طلب مشروع الآن</a>
+                <a href="/pricing" class="btn btn-secondary btn-lg" style="color: #ffffff; border-color: #555555;">استعراض باقات الأسعار</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- 8. تذييل الموقع (Footer) -->
+    <footer class="site-footer">
+        <div class="container">
+            <div class="footer-top-grid">
+                <div>
+                    <a href="/" class="brand-text" style="margin-bottom: 1.25rem;">
+                        <span>خدماتك الرقمية</span>
+                        <span class="brand-dot"></span>
+                    </a>
+                    <p style="font-size: 0.92rem; color: var(--text-secondary); max-width: 320px; line-height: 1.7;">
+                        استوديو رقمي عربي مستقل. نبني مواقع إلكترونية وحلولاً برمجية متقنة تمنحك حضوراً واثقاً ومميزاً على الإنترنت.
+                    </p>
+                </div>
+                <div>
+                    <div class="footer-col-title">الصفحات</div>
+                    <ul class="footer-col-links">
+                        <li><a href="/">الرئيسية</a></li>
+                        <li><a href="/services">كافة الخدمات</a></li>
+                        <li><a href="/portfolio">معرض الأعمال</a></li>
+                        <li><a href="/pricing">باقات الأسعار</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <div class="footer-col-title">عن الاستوديو</div>
+                    <ul class="footer-col-links">
+                        <li><a href="/process">طريقة العمل</a></li>
+                        <li><a href="/faq">الأسئلة الشائعة</a></li>
+                        <li><a href="/blog">المدونة والتقارير</a></li>
+                        <li><a href="/contact">طلب مشروع جديد</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <div class="footer-col-title">تواصل مباشر</div>
+                    <ul class="footer-col-links">
+                        <li><a href="https://wa.me/962790000000" id="footer-whatsapp-link" target="_blank">محادثة واتساب مباشرة</a></li>
+                        <li><a href="/contact">إرسال استفسار عبر الموقع</a></li>
+                        <li><span style="font-size: 0.85rem; color: var(--text-muted);">عمان، المملكة الأردنية الهاشمية</span></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="footer-bottom-row">
+                <div>&copy; 2026 خدماتك الرقمية — جميع الحقوق محفوظة.</div>
+                <div>تصميم وبرمجة مخصصة بدون قوالب جاهزة.</div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Floating WhatsApp Button -->
+    <a href="https://wa.me/962790000000" class="floating-whatsapp" id="floating-whatsapp" target="_blank" aria-label="تواصل عبر واتساب">
+        <svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24"><path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.711 2.598 2.669-.699c.969.54 1.771.82 2.791.82 3.181 0 5.767-2.586 5.768-5.766 0-3.18-2.586-5.766-5.768-5.766zm9.969 5.766c0 5.518-4.482 10-10 10-1.748 0-3.385-.45-4.819-1.238l-7.181 1.88 1.914-6.994c-.876-1.492-1.384-3.23-1.384-5.088 0-5.518 4.482-10 10-10 5.518 0 10 4.482 10 10z"/></svg>
+        <span>محادثة واتساب</span>
+    </a>
+
+    <!-- Mobile Drawer Backdrop -->
+    <div id="mobile-drawer-backdrop" class="mobile-drawer-backdrop" aria-hidden="true"></div>
+
+    <!-- Mobile Navigation Drawer -->
+    <aside id="mobile-drawer" class="mobile-drawer" aria-label="قائمة التنقل للهاتف">
+        <div class="mobile-drawer-header">
+            <a href="/" class="drawer-brand">
+                <span>خدماتك الرقمية</span>
+                <span class="brand-dot"></span>
+            </a>
+            <button id="mobile-drawer-close" class="mobile-drawer-close" aria-label="إغلاق القائمة">
+                <svg width="22" height="22" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+        </div>
+
+        <nav class="mobile-drawer-nav">
+            <ul class="mobile-drawer-list">
+                <li><a href="/" class="mobile-drawer-link active"><span class="drawer-num">01</span><span>الرئيسية</span></a></li>
+                <li><a href="/services" class="mobile-drawer-link"><span class="drawer-num">02</span><span>الخدمات الرقمية</span></a></li>
+                <li><a href="/portfolio" class="mobile-drawer-link"><span class="drawer-num">03</span><span>معرض الأعمال</span></a></li>
+                <li><a href="/pricing" class="mobile-drawer-link"><span class="drawer-num">04</span><span>خطط الأسعار</span></a></li>
+                <li><a href="/process" class="mobile-drawer-link"><span class="drawer-num">05</span><span>طريقة العمل</span></a></li>
+                <li><a href="/blog" class="mobile-drawer-link"><span class="drawer-num">06</span><span>المدونة التقنية</span></a></li>
+                <li><a href="/faq" class="mobile-drawer-link"><span class="drawer-num">07</span><span>الأسئلة الشائعة</span></a></li>
+                <li><a href="/contact" class="mobile-drawer-link"><span class="drawer-num">08</span><span>تواصل معنا</span></a></li>
+            </ul>
+        </nav>
+
+        <div class="mobile-drawer-footer">
+            <a href="/contact" class="btn btn-primary btn-block">ابدأ مشروعك الآن</a>
+            <a href="https://wa.me/962790000000" id="drawer-whatsapp-link" class="btn btn-secondary btn-block" target="_blank" rel="noopener">
+                <svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24"><path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.711 2.598 2.664-.699c.971.53 1.77.813 2.796.814 3.179 0 5.767-2.587 5.768-5.766 0-3.18-2.587-5.768-5.768-5.768zm3.364 8.16c-.14.394-.81.767-1.127.813-.318.046-.731.066-2.146-.516-1.706-.702-2.796-2.457-2.881-2.57-.085-.114-.689-.916-.689-1.747 0-.831.438-1.24.594-1.409.155-.169.339-.211.452-.211.113 0 .226 0 .325.006.103.006.24.019.349.279.113.268.395.962.43 1.032.035.07.058.152.012.245-.046.093-.07.151-.14.233-.07.081-.148.181-.211.243-.07.07-.144.146-.062.287.082.141.365.602.784.974.54.481.996.63 1.137.7.141.07.225.059.31-.039.084-.099.366-.424.464-.57.099-.147.197-.122.338-.07.141.052.898.423 1.053.5.155.078.258.117.296.183.038.066.038.384-.102.778z"/></svg>
+                <span>واتساب مباشر</span>
+            </a>
+        </div>
+    </aside>
+
+    <!-- Scripts -->
+    <script src="/js/main.js?v=2.5"></script>
+</body>
+</html>
