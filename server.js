@@ -12,6 +12,7 @@ const { requireAuth, checkAuthStatus, generateToken } = require('./middleware/au
 const upload = require('./middleware/upload');
 const { formRateLimiter, loginRateLimiter, sanitizeString, generateOrderNumber } = require('./middleware/security');
 const { sendNewOrderEmail, sendContactMessageEmail, testMailConnection } = require('./services/emailService');
+const { obfuscateHtml } = require('./middleware/obfuscator');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -33,7 +34,24 @@ app.use((req, res, next) => {
     res.set('Expires', '0');
     next();
 });
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, 'public'), { index: false }));
+
+// دوال حماية وتشفير كود المصدر لمنع كشفه عبر view-source
+function renderProtectedFile(req, res, filePath, statusCode = 200) {
+    try {
+        const html = fs.readFileSync(filePath, 'utf8');
+        res.status(statusCode).send(obfuscateHtml(html, req));
+    } catch (err) {
+        res.status(statusCode).sendFile(filePath);
+    }
+}
+
+function renderProtectedHtml(req, res, html, statusCode = 200) {
+    res.status(statusCode).send(obfuscateHtml(html, req));
+}
+
+// إعادة توجيه /index.html إلى /
+app.get('/index.html', (req, res) => res.redirect(301, '/'));
 
 // =========================================================================
 // 1. مسارات الـ SEO والصفحات العامة (Dynamic SEO Routing)
@@ -41,12 +59,12 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // الصفحة الرئيسية
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'index.html'));
+    renderProtectedFile(req, res, path.join(__dirname, 'public', 'index.html'));
 });
 
 // صفحة فهرس الخدمات المستقلة (/services)
 app.get('/services', (req, res) => {
-    res.sendFile(path.join(__dirname, 'views', 'services.html'));
+    renderProtectedFile(req, res, path.join(__dirname, 'views', 'services.html'));
 });
 
 // صفحات الخدمات المنفصلة (/services/:slug)
@@ -99,7 +117,7 @@ app.get('/services/:slug', async (req, res) => {
             .replace(/{{SERVICE_IMAGE}}/g, serviceImg)
             .replace(/{{SERVICE_ICON}}/g, service.icon_svg);
 
-        res.send(template);
+        renderProtectedHtml(req, res, template);
     } catch (err) {
         res.status(500).send('خطأ في الخادم أثناء تحميل الخدمة.');
     }
@@ -107,22 +125,22 @@ app.get('/services/:slug', async (req, res) => {
 
 // صفحة باقات الأسعار المستقلة (/pricing)
 app.get('/pricing', (req, res) => {
-    res.sendFile(path.join(__dirname, 'views', 'pricing.html'));
+    renderProtectedFile(req, res, path.join(__dirname, 'views', 'pricing.html'));
 });
 
 // صفحة طريقة العمل ومن نحن المستقلة (/process & /about)
 app.get(['/process', '/about'], (req, res) => {
-    res.sendFile(path.join(__dirname, 'views', 'process.html'));
+    renderProtectedFile(req, res, path.join(__dirname, 'views', 'process.html'));
 });
 
 // صفحة طلب مشروع والتواصل المستقلة (/contact)
 app.get('/contact', (req, res) => {
-    res.sendFile(path.join(__dirname, 'views', 'contact.html'));
+    renderProtectedFile(req, res, path.join(__dirname, 'views', 'contact.html'));
 });
 
 // صفحة الأسئلة الشائعة المستقلة (/faq)
 app.get('/faq', (req, res) => {
-    res.sendFile(path.join(__dirname, 'views', 'faq.html'));
+    renderProtectedFile(req, res, path.join(__dirname, 'views', 'faq.html'));
 });
 
 // =========================================================================
@@ -136,22 +154,22 @@ app.get('/demos/graduation', (req, res) => {
 
 // معاينة حية: دعوة زفاف إلكترونية ملكية
 app.get('/demos/wedding', (req, res) => {
-    res.sendFile(path.join(__dirname, 'views', 'demos', 'wedding.html'));
+    renderProtectedFile(req, res, path.join(__dirname, 'views', 'demos', 'wedding.html'));
 });
 
 // معاينة حية: متجر إلكتروني وسلة طلبات واتساب
 app.get('/demos/store', (req, res) => {
-    res.sendFile(path.join(__dirname, 'views', 'demos', 'store.html'));
+    renderProtectedFile(req, res, path.join(__dirname, 'views', 'demos', 'store.html'));
 });
 
 // معاينة حية: منصة كويزات واختبارات تفاعلية
 app.get('/demos/quiz', (req, res) => {
-    res.sendFile(path.join(__dirname, 'views', 'demos', 'quiz.html'));
+    renderProtectedFile(req, res, path.join(__dirname, 'views', 'demos', 'quiz.html'));
 });
 
 // صفحة فهرس المدونة (/blog)
 app.get('/blog', (req, res) => {
-    res.sendFile(path.join(__dirname, 'views', 'blog-index.html'));
+    renderProtectedFile(req, res, path.join(__dirname, 'views', 'blog-index.html'));
 });
 
 // صفحة قراءة المقال المستقل (/blog/:slug)
@@ -203,7 +221,7 @@ app.get('/blog/:slug', async (req, res) => {
             .replace(/{{POST_SEO_DESC}}/g, post.seo_description || post.summary)
             .replace(/{{POST_KEYWORDS}}/g, post.keywords || '');
 
-        res.send(template);
+        renderProtectedHtml(req, res, template);
     } catch (err) {
         res.status(500).send('خطأ أثناء قراءة المقال.');
     }
@@ -211,7 +229,7 @@ app.get('/blog/:slug', async (req, res) => {
 
 // صفحة معرض الأعمال المستقل (/portfolio)
 app.get('/portfolio', (req, res) => {
-    res.sendFile(path.join(__dirname, 'views', 'portfolio.html'));
+    renderProtectedFile(req, res, path.join(__dirname, 'views', 'portfolio.html'));
 });
 
 // =========================================================================
@@ -293,14 +311,14 @@ const ADMIN_PATH = (process.env.ADMIN_PATH || '/admin-panel-secret').trim();
 app.get(ADMIN_PATH, async (req, res) => {
     const user = await checkAuthStatus(req);
     if (user) {
-        return res.sendFile(path.join(__dirname, 'views', 'admin-dashboard.html'));
+        return renderProtectedFile(req, res, path.join(__dirname, 'views', 'admin-dashboard.html'));
     }
-    return res.sendFile(path.join(__dirname, 'views', 'admin-login.html'));
+    return renderProtectedFile(req, res, path.join(__dirname, 'views', 'admin-login.html'));
 });
 
 // إخفاء مسار /admin والمسارات التقليدية تماماً وإرجاع 404
 app.all(['/admin', '/admin/*', '/admin/login', '/admin/dashboard'], (req, res) => {
-    res.status(404).sendFile(path.join(__dirname, 'views', '404.html'));
+    renderProtectedFile(req, res, path.join(__dirname, 'views', '404.html'), 404);
 });
 
 // =========================================================================
@@ -1001,7 +1019,7 @@ app.get('/api/stats', requireAuth, async (req, res) => {
 // =========================================================================
 app.use((req, res) => {
     if (req.accepts('html')) {
-        return res.status(404).sendFile(path.join(__dirname, 'views', '404.html'));
+        return renderProtectedFile(req, res, path.join(__dirname, 'views', '404.html'), 404);
     }
     res.status(404).json({ success: false, message: 'المسار غير موجود (404 Not Found)' });
 });

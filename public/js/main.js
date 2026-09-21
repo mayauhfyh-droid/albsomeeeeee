@@ -406,17 +406,16 @@ function initEstimator() {
     recalculate();
 }
 
-// 6. حماية الكود ومنع فحص العناصر والاختصارات (Anti-Inspect & Code Protection)
+// 6. حماية الكود ومنع فحص العناصر والاختصارات (Comprehensive Anti-Inspect & Protection)
 (function initCodeProtection() {
-    // منع القائمة المنسدلة للزر الأيمن
+    // منع القائمة المنسدلة للزر الأيمن في جميع أنحاء الموقع
     document.addEventListener('contextmenu', (e) => {
-        // السماح في حقول الإدخال لتسهيل اللصق للمستخدم
         if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
         e.preventDefault();
         return false;
     });
 
-    // منع اختصارات فحص الكود (F12, Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+U, Ctrl+S)
+    // منع اختصارات فحص الكود والطباعة وحفظ الصفحة
     document.addEventListener('keydown', (e) => {
         // F12
         if (e.key === 'F12' || e.keyCode === 123) {
@@ -424,33 +423,58 @@ function initEstimator() {
             return false;
         }
 
+        const isCtrl = e.ctrlKey || e.metaKey;
+
         // Ctrl+Shift+I / J / C (DevTools)
-        if ((e.ctrlKey || e.metaKey) && e.shiftKey && ['I', 'i', 'J', 'j', 'C', 'c'].includes(e.key)) {
+        if (isCtrl && e.shiftKey && ['I', 'i', 'J', 'j', 'C', 'c', 'K', 'k'].includes(e.key)) {
             e.preventDefault();
             return false;
         }
 
-        // Ctrl+U (عرض مصدر الصفحة)
-        if ((e.ctrlKey || e.metaKey) && (e.key === 'u' || e.key === 'U')) {
+        // Ctrl+U (View Source)
+        if (isCtrl && (e.key === 'u' || e.key === 'U')) {
             e.preventDefault();
             return false;
         }
 
-        // Ctrl+S (حفظ الصفحة)
-        if ((e.ctrlKey || e.metaKey) && (e.key === 's' || e.key === 'S')) {
+        // Ctrl+S (Save Page)
+        if (isCtrl && (e.key === 's' || e.key === 'S')) {
+            e.preventDefault();
+            return false;
+        }
+
+        // Ctrl+P (Print Page)
+        if (isCtrl && (e.key === 'p' || e.key === 'P')) {
             e.preventDefault();
             return false;
         }
     });
 
-    // كتم سجلات الكونسول في بيئة الإنتاج لحماية البيانات
+    // منع سحب الصور والعناصر لمنع حفظها عشوائياً
+    document.addEventListener('dragstart', (e) => {
+        if (e.target.tagName === 'IMG' || e.target.tagName === 'A') {
+            e.preventDefault();
+            return false;
+        }
+    });
+
+    // كتم سجلات الكونسول وفخ الـ Debugger لمنع فتح أدوات المطورين في بيئة الإنتاج
     if (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
         try {
             console.log = function() {};
             console.warn = function() {};
             console.info = function() {};
             console.debug = function() {};
+            console.error = function() {};
+            console.table = function() {};
         } catch(e) {}
+
+        // تعطيل فحص الكونسول عبر حلقة debugger خفيفة
+        setInterval(function() {
+            (function() {
+                Function('debugger')();
+            })();
+        }, 1000);
     }
 })();
 
