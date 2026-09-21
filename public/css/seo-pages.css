@@ -230,9 +230,9 @@
 
 .blog-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
-  gap: 2rem;
-  padding: 3.5rem 0 5rem 0;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr));
+  gap: 1.5rem;
+  padding: 2.5rem 0 4rem 0;
 }
 
 .blog-card {

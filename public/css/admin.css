@@ -499,15 +499,21 @@
   }
 
   .admin-sidebar {
-    right: -280px;
+    right: 0;
+    transform: translateX(105%);
+    visibility: hidden;
+    pointer-events: none;
     width: 270px;
-    z-index: 50;
+    max-width: 85vw;
+    z-index: 1050;
     box-shadow: none;
-    transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s ease;
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.3s, box-shadow 0.3s ease;
   }
 
   .admin-sidebar.active {
-    right: 0;
+    transform: translateX(0) !important;
+    visibility: visible !important;
+    pointer-events: auto !important;
     box-shadow: -4px 0 25px rgba(0, 0, 0, 0.15);
   }
 
