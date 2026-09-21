@@ -363,6 +363,9 @@
             <div class="admin-tab-pane" id="tab-settings">
                 <div class="admin-card-box" style="max-width: 680px;">
                     <h3 style="font-size: 1.15rem; margin-bottom: 1.5rem;">إعدادات الموقع وبيانات التواصل والإشعارات</h3>
+                    
+                    <div id="settings-save-alert" style="display: none; padding: 0.85rem 1.25rem; border-radius: 6px; margin-bottom: 1.25rem; font-weight: 700; font-size: 0.9rem;"></div>
+
                     <form onsubmit="saveSettings(event)">
                         <div class="form-field">
                             <label for="setting-whatsapp">رقم WhatsApp الرسمي (المربوط بالطلبات)</label>
@@ -419,7 +422,7 @@
                             </div>
                         </div>
 
-                        <button type="submit" class="btn btn-primary btn-lg">حفظ كافة الإعدادات</button>
+                        <button type="submit" id="btn-save-settings" class="btn btn-primary btn-lg">حفظ كافة الإعدادات</button>
                     </form>
                 </div>
             </div>

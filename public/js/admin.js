@@ -1162,6 +1162,11 @@ async function loadSettings() {
 
 window.saveSettings = async function(e) {
     if (e) e.preventDefault();
+    
+    const alertEl = document.getElementById('settings-save-alert');
+    const submitBtn = document.getElementById('btn-save-settings');
+    const originalBtnText = submitBtn ? submitBtn.innerHTML : 'حفظ كافة الإعدادات';
+
     const settings = {
         whatsapp_number: (document.getElementById('setting-whatsapp')?.value || '').trim(),
         site_name: (document.getElementById('setting-site-name')?.value || '').trim(),
@@ -1172,6 +1177,15 @@ window.saveSettings = async function(e) {
         gmail_app_password: (document.getElementById('setting-gmail-password')?.value || '').trim()
     };
 
+    if (alertEl) {
+        alertEl.style.display = 'none';
+    }
+
+    if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '⏳ جاري الحفظ والتحديث...';
+    }
+
     try {
         const res = await fetch('/api/settings', {
             method: 'PUT',
@@ -1179,13 +1193,38 @@ window.saveSettings = async function(e) {
             body: JSON.stringify({ settings })
         });
         const result = await res.json();
+        
         if (result.success) {
-            alert('تم حفظ الإعدادات وتحديث بيانات التواصل وإشعارات Gmail بنجاح.');
+            if (alertEl) {
+                alertEl.style.display = 'block';
+                alertEl.style.background = '#dcfce7';
+                alertEl.style.border = '1px solid #86efac';
+                alertEl.style.color = '#15803d';
+                alertEl.innerHTML = '✅ تم حفظ وتحديث كافة الإعدادات بنجاح في قاعدة البيانات!';
+                alertEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }
         } else {
-            alert(result.message || 'فشل حفظ الإعدادات.');
+            if (alertEl) {
+                alertEl.style.display = 'block';
+                alertEl.style.background = '#fee2e2';
+                alertEl.style.border = '1px solid #fca5a5';
+                alertEl.style.color = '#b91c1c';
+                alertEl.innerHTML = `❌ ${result.message || 'فشل حفظ الإعدادات.'}`;
+            }
         }
     } catch (err) {
-        alert('حدث خطأ أثناء حفظ الإعدادات.');
+        if (alertEl) {
+            alertEl.style.display = 'block';
+            alertEl.style.background = '#fee2e2';
+            alertEl.style.border = '1px solid #fca5a5';
+            alertEl.style.color = '#b91c1c';
+            alertEl.innerHTML = '❌ حدث خطأ أثناء الاتصال بالخادم وحفظ الإعدادات.';
+        }
+    } finally {
+        if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = originalBtnText;
+        }
     }
 };
 

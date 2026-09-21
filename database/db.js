@@ -169,13 +169,13 @@ if (databaseUrl) {
         if (/INSERT\s+OR\s+REPLACE\s+INTO\s+settings/i.test(transformed)) {
             if (/group_name/i.test(transformed)) {
                 transformed = transformed.replace(
-                    /INSERT\s+OR\s+REPLACE\s+INTO\s+settings\s*\(key,\s*value,\s*group_name,\s*updated_at\)\s*VALUES\s*\(\?,\s*\?,\s*\?,\s*CURRENT_TIMESTAMP\)/i,
-                    'INSERT INTO settings (key, value, group_name, updated_at) VALUES (?, ?, ?, CURRENT_TIMESTAMP) ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value, group_name = EXCLUDED.group_name, updated_at = CURRENT_TIMESTAMP'
+                    /INSERT\s+OR\s+REPLACE\s+INTO\s+settings\s*\(([^)]+)\)\s*VALUES\s*\(([^)]+)\)/i,
+                    'INSERT INTO settings ($1) VALUES ($2) ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value, group_name = EXCLUDED.group_name, updated_at = CURRENT_TIMESTAMP'
                 );
             } else {
                 transformed = transformed.replace(
-                    /INSERT\s+OR\s+REPLACE\s+INTO\s+settings\s*\(key,\s*value,\s*updated_at\)\s*VALUES\s*\(\?,\s*\?,\s*CURRENT_TIMESTAMP\)/i,
-                    'INSERT INTO settings (key, value, updated_at) VALUES (?, ?, CURRENT_TIMESTAMP) ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value, updated_at = CURRENT_TIMESTAMP'
+                    /INSERT\s+OR\s+REPLACE\s+INTO\s+settings\s*\(([^)]+)\)\s*VALUES\s*\(([^)]+)\)/i,
+                    'INSERT INTO settings ($1) VALUES ($2) ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value, updated_at = CURRENT_TIMESTAMP'
                 );
             }
         }
@@ -201,12 +201,13 @@ if (databaseUrl) {
         },
         run: async (sql, params = []) => {
             let pgSql = transformQuery(sql);
-            if (/^\s*INSERT\s+INTO/i.test(pgSql) && !/RETURNING/i.test(pgSql)) {
+            // استثناء جدول settings من RETURNING id لأن مفتاحه الأساسي هو key وليس id
+            if (/^\s*INSERT\s+INTO\s+(?!settings\b)/i.test(pgSql) && !/RETURNING/i.test(pgSql)) {
                 pgSql += ' RETURNING id';
             }
             const res = await pool.query(pgSql, params);
             return {
-                lastID: res.rows && res.rows[0] ? res.rows[0].id : null,
+                lastID: res.rows && res.rows[0] && res.rows[0].id !== undefined ? res.rows[0].id : null,
                 changes: res.rowCount
             };
         },
