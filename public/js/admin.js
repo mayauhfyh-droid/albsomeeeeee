@@ -90,8 +90,8 @@ function initAdminTabs() {
                 pageTitle.textContent = labelSpan ? labelSpan.textContent.trim() : btn.textContent.trim();
             }
 
-            // إغلاق القائمة على الهواتف
-            if (window.innerWidth <= 900) {
+            // إغلاق القائمة على الهواتف والأجهزة اللوحية
+            if (window.innerWidth <= 1024) {
                 if (sidebar) sidebar.classList.remove('active');
                 if (overlay) overlay.classList.remove('active');
                 document.body.style.overflow = '';
