@@ -458,23 +458,14 @@ function initEstimator() {
         }
     });
 
-    // كتم سجلات الكونسول وفخ الـ Debugger لمنع فتح أدوات المطورين في بيئة الإنتاج
+    // كتم سجلات الكونسول في بيئة الإنتاج لحماية البيانات
     if (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
         try {
             console.log = function() {};
             console.warn = function() {};
             console.info = function() {};
             console.debug = function() {};
-            console.error = function() {};
-            console.table = function() {};
         } catch(e) {}
-
-        // تعطيل فحص الكونسول عبر حلقة debugger خفيفة
-        setInterval(function() {
-            (function() {
-                Function('debugger')();
-            })();
-        }, 1000);
     }
 })();
 
