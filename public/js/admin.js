@@ -1334,9 +1334,9 @@ function initGuideAccordion() {
 window.adminLogout = async function() {
     try {
         await fetch('/api/auth/logout', { method: 'POST' });
-        window.location.href = '/admin/login';
+        window.location.href = '/';
     } catch (e) {
-        window.location.href = '/admin/login';
+        window.location.href = '/';
     }
 };
 

@@ -1,4 +1,5 @@
 const jwt = require('jsonwebtoken');
+const path = require('path');
 const db = require('../database/db');
 
 const JWT_SECRET = process.env.JWT_SECRET || 'khadamatak_super_secret_jwt_key_2026_secure_random_token';
@@ -18,9 +19,9 @@ async function requireAuth(req, res, next) {
         }
 
         if (!token) {
-            // إذا كان الطلب من المتصفح لصفحة HTML
-            if (req.accepts('html')) {
-                return res.redirect('/admin/login?error=unauthorized');
+            // إذا كان الطلب من المتصفح لصفحة HTML وليس استدعاء API
+            if (req.accepts('html') && !req.path.startsWith('/api/')) {
+                return res.status(404).sendFile(path.join(__dirname, '../views', '404.html'));
             }
             return res.status(401).json({ success: false, message: 'غير مصرح لك بالوصول. يرجى تسجيل الدخول أولاً.' });
         }
@@ -31,8 +32,8 @@ async function requireAuth(req, res, next) {
         const user = await db.get('SELECT id, username, email, role FROM users WHERE id = ?', [decoded.id]);
         if (!user) {
             res.clearCookie('admin_token');
-            if (req.accepts('html')) {
-                return res.redirect('/admin/login?error=invalid_user');
+            if (req.accepts('html') && !req.path.startsWith('/api/')) {
+                return res.status(404).sendFile(path.join(__dirname, '../views', '404.html'));
             }
             return res.status(401).json({ success: false, message: 'المستخدم غير موجود أو تم حذفه.' });
         }
@@ -41,10 +42,28 @@ async function requireAuth(req, res, next) {
         next();
     } catch (err) {
         res.clearCookie('admin_token');
-        if (req.accepts('html')) {
-            return res.redirect('/admin/login?error=expired');
+        if (req.accepts('html') && !req.path.startsWith('/api/')) {
+            return res.status(404).sendFile(path.join(__dirname, '../views', '404.html'));
         }
         return res.status(401).json({ success: false, message: 'انتهت صلاحية الجلسة، يرجى إعادة تسجيل الدخول.' });
+    }
+}
+
+// دالة فحص مصادقة خفيفة لمعرفة ما إذا كان الزائر أدمن مسجل دخوله مسبقاً
+async function checkAuthStatus(req) {
+    try {
+        let token = null;
+        if (req.cookies && req.cookies.admin_token) {
+            token = req.cookies.admin_token;
+        } else if (req.headers.authorization && req.headers.authorization.startsWith('Bearer ')) {
+            token = req.headers.authorization.split(' ')[1];
+        }
+        if (!token) return null;
+        const decoded = jwt.verify(token, JWT_SECRET);
+        const user = await db.get('SELECT id, username, email, role FROM users WHERE id = ?', [decoded.id]);
+        return user || null;
+    } catch (e) {
+        return null;
     }
 }
 
@@ -59,5 +78,6 @@ function generateToken(user) {
 
 module.exports = {
     requireAuth,
+    checkAuthStatus,
     generateToken
 };

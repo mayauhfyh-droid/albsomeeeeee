@@ -4,7 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>تسجيل الدخول إلى لوحة التحكم — خدماتك الرقمية</title>
-    <meta name="robots" content="noindex, nofollow">
+    <meta name="robots" content="noindex, nofollow, noarchive, nosnippet">
+    <meta name="googlebot" content="noindex, nofollow, noarchive, nosnippet">
     
     <link rel="stylesheet" href="/css/style.css">
     <link rel="stylesheet" href="/css/admin.css">
@@ -21,7 +22,7 @@
             <p style="font-size: 0.85rem; color: #64748b;">سجل الدخول لإدارة الطلبات والخدمات والمحتوى</p>
         </div>
 
-        <div id="login-error-alert" style="display: none; padding: 0.75rem; border: 1px solid #fecaca; background: #fef2f2; color: #dc2626; font-size: 0.85rem; margin-bottom: 1.25rem; text-align: center;"></div>
+        <div id="login-error-alert" style="display: none; padding: 0.75rem; border: 1px solid #fecaca; background: #fef2f2; color: #dc2626; font-size: 0.85rem; margin-bottom: 1.25rem; text-align: center; border-radius: 4px;"></div>
 
         <form id="admin-login-form">
             <div class="form-field" style="text-align: right;">
@@ -65,7 +66,7 @@
 
                 const data = await res.json();
                 if (data.success) {
-                    window.location.href = '/admin';
+                    window.location.href = data.redirect || window.location.pathname;
                 } else {
                     errorAlert.textContent = data.message || 'بيانات الدخول غير صحيحة';
                     errorAlert.style.display = 'block';

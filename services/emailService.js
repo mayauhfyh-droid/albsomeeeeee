@@ -282,7 +282,7 @@ async function sendNewOrderEmail(order, uploadedFile = null) {
                     <a href="${whatsappUrl}" class="btn btn-whatsapp" target="_blank">
                         💬 محادثة العميل مباشرة عبر WhatsApp
                     </a>
-                    <a href="${process.env.SITE_URL || 'http://localhost:3000'}/admin" class="btn btn-admin" target="_blank">
+                    <a href="${process.env.SITE_URL || 'http://localhost:3000'}${process.env.ADMIN_PATH || '/admin-panel-secret'}" class="btn btn-admin" target="_blank">
                         ⚙️ فتح لوحة تحكم الإدارة
                     </a>
                 </div>

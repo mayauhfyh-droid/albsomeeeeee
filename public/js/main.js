@@ -406,3 +406,52 @@ function initEstimator() {
     recalculate();
 }
 
+// 6. حماية الكود ومنع فحص العناصر والاختصارات (Anti-Inspect & Code Protection)
+(function initCodeProtection() {
+    // منع القائمة المنسدلة للزر الأيمن
+    document.addEventListener('contextmenu', (e) => {
+        // السماح في حقول الإدخال لتسهيل اللصق للمستخدم
+        if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+        e.preventDefault();
+        return false;
+    });
+
+    // منع اختصارات فحص الكود (F12, Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+U, Ctrl+S)
+    document.addEventListener('keydown', (e) => {
+        // F12
+        if (e.key === 'F12' || e.keyCode === 123) {
+            e.preventDefault();
+            return false;
+        }
+
+        // Ctrl+Shift+I / J / C (DevTools)
+        if ((e.ctrlKey || e.metaKey) && e.shiftKey && ['I', 'i', 'J', 'j', 'C', 'c'].includes(e.key)) {
+            e.preventDefault();
+            return false;
+        }
+
+        // Ctrl+U (عرض مصدر الصفحة)
+        if ((e.ctrlKey || e.metaKey) && (e.key === 'u' || e.key === 'U')) {
+            e.preventDefault();
+            return false;
+        }
+
+        // Ctrl+S (حفظ الصفحة)
+        if ((e.ctrlKey || e.metaKey) && (e.key === 's' || e.key === 'S')) {
+            e.preventDefault();
+            return false;
+        }
+    });
+
+    // كتم سجلات الكونسول في بيئة الإنتاج لحماية البيانات
+    if (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
+        try {
+            console.log = function() {};
+            console.warn = function() {};
+            console.info = function() {};
+            console.debug = function() {};
+        } catch(e) {}
+    }
+})();
+
+

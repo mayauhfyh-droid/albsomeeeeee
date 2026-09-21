@@ -8,7 +8,7 @@ const bcrypt = require('bcryptjs');
 const fs = require('fs');
 
 const db = require('./database/db');
-const { requireAuth, generateToken } = require('./middleware/auth');
+const { requireAuth, checkAuthStatus, generateToken } = require('./middleware/auth');
 const upload = require('./middleware/upload');
 const { formRateLimiter, loginRateLimiter, sanitizeString, generateOrderNumber } = require('./middleware/security');
 const { sendNewOrderEmail, sendContactMessageEmail, testMailConnection } = require('./services/emailService');
@@ -34,7 +34,6 @@ app.use((req, res, next) => {
     next();
 });
 app.use(express.static(path.join(__dirname, 'public')));
-app.use('/views', express.static(path.join(__dirname, 'views')));
 
 // =========================================================================
 // 1. مسارات الـ SEO والصفحات العامة (Dynamic SEO Routing)
@@ -278,26 +277,30 @@ app.get('/robots.txt', (req, res) => {
         ? process.env.SITE_URL 
         : `${protocol}://${host}`;
 
+    const adminPath = (process.env.ADMIN_PATH || '/admin-panel-secret').trim();
+
     res.type('text/plain');
-    res.send(`User-agent: *\nAllow: /\nDisallow: /admin/\nDisallow: /api/\n\nSitemap: ${siteUrl}/sitemap.xml\n`);
+    res.send(`User-agent: *\nAllow: /\nDisallow: /admin\nDisallow: /admin/\nDisallow: ${adminPath}\nDisallow: /api/\n\nSitemap: ${siteUrl}/sitemap.xml\n`);
 });
 
 // =========================================================================
-// 3. مسارات لوحة تحكم الإدارة (Admin Routing)
+// 3. مسارات لوحة تحكم الإدارة السرية (Secret Admin Routing)
 // =========================================================================
 
-// صفحة تسجيل دخول الأدمن
-app.get('/admin/login', (req, res) => {
-    res.sendFile(path.join(__dirname, 'views', 'admin-login.html'));
+const ADMIN_PATH = (process.env.ADMIN_PATH || '/admin-panel-secret').trim();
+
+// المسار السري المخصص للأدمن (لوحة التحكم إذا مسجل دخوله، أو نموذج الدخول إذا غير مسجل)
+app.get(ADMIN_PATH, async (req, res) => {
+    const user = await checkAuthStatus(req);
+    if (user) {
+        return res.sendFile(path.join(__dirname, 'views', 'admin-dashboard.html'));
+    }
+    return res.sendFile(path.join(__dirname, 'views', 'admin-login.html'));
 });
 
-// لوحة التحكم الرئيسية المحمية
-app.get('/admin', requireAuth, (req, res) => {
-    res.sendFile(path.join(__dirname, 'views', 'admin-dashboard.html'));
-});
-
-app.get('/admin/dashboard', requireAuth, (req, res) => {
-    res.redirect('/admin');
+// إخفاء مسار /admin والمسارات التقليدية تماماً وإرجاع 404
+app.all(['/admin', '/admin/*', '/admin/login', '/admin/dashboard'], (req, res) => {
+    res.status(404).sendFile(path.join(__dirname, 'views', '404.html'));
 });
 
 // =========================================================================
@@ -336,6 +339,7 @@ app.post('/api/auth/login', loginRateLimiter, async (req, res) => {
         res.json({
             success: true,
             message: 'تم تسجيل الدخول بنجاح.',
+            redirect: ADMIN_PATH,
             user: { id: user.id, username: user.username, email: user.email, role: user.role }
         });
     } catch (err) {
@@ -992,12 +996,22 @@ app.get('/api/stats', requireAuth, async (req, res) => {
     }
 });
 
+// =========================================================================
+// 8. معالج الصفحات غير الموجودة (404 Not Found Handler)
+// =========================================================================
+app.use((req, res) => {
+    if (req.accepts('html')) {
+        return res.status(404).sendFile(path.join(__dirname, 'views', '404.html'));
+    }
+    res.status(404).json({ success: false, message: 'المسار غير موجود (404 Not Found)' });
+});
+
 // تشغيل الخادم
 app.listen(PORT, () => {
     console.log(`====================================================`);
     console.log(`🚀 خادم منصة "خدماتك الرقمية" يعمل بنجاح!`);
     console.log(`🌐 الموقع الرئيسي: http://localhost:${PORT}`);
-    console.log(`🔐 لوحة تحكم الإدارة: http://localhost:${PORT}/admin`);
+    console.log(`🔐 المسار السري للإدارة: http://localhost:${PORT}${ADMIN_PATH}`);
     console.log(`🗺️ خريطة الموقع: http://localhost:${PORT}/sitemap.xml`);
     console.log(`====================================================`);
 });
