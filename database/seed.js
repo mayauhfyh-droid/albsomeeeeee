@@ -22,8 +22,9 @@ async function seed() {
         const defaultSettings = [
             { key: 'site_name', value: 'خدماتك الرقمية', group_name: 'general' },
             { key: 'site_tagline', value: 'حوّل فكرتك إلى موقع إلكتروني احترافي وحلول رقمية متطورة', group_name: 'general' },
-            { key: 'whatsapp_number', value: '+962790000000', group_name: 'contact' },
-            { key: 'contact_email', value: 'info@khadamatak.com', group_name: 'contact' },
+            { key: 'whatsapp_number', value: '+962791413321', group_name: 'contact' },
+            { key: 'contact_email', value: 'aisaralbsomea@gmail.com', group_name: 'contact' },
+            { key: 'gmail_user', value: 'aisaralbsomea@gmail.com', group_name: 'general' },
             { key: 'instagram_url', value: 'https://instagram.com/khadamatak', group_name: 'social' },
             { key: 'telegram_url', value: 'https://t.me/khadamatak', group_name: 'social' },
             { key: 'currency', value: 'دينار أردني', group_name: 'business' },

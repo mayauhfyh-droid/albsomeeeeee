@@ -441,7 +441,7 @@ app.post('/api/orders', formRateLimiter, upload.single('attachment'), async (req
 
         // جلب رقم الواتساب من إعدادات الموقع
         const settingRow = await db.get('SELECT value FROM settings WHERE key = ?', ['whatsapp_number']);
-        const whatsappNumber = settingRow ? settingRow.value.replace(/[^0-9]/g, '') : '962790000000';
+        const whatsappNumber = settingRow ? settingRow.value.replace(/[^0-9]/g, '') : '962791413321';
 
         // توليد رسالة الواتساب العربية المنسقة تلقائياً
         const messageText = `مرحبًا، أريد طلب خدمة من خدماتك الرقمية.\n\nالخدمة: ${service_name || 'خدمة مخصصة'}\nالاسم: ${customer_name}\nرقم الهاتف: ${customer_phone}\nرقم الطلب المرجعي: ${orderNumber}\n\nتفاصيل المشروع:\n${project_details}\n\nالموعد المطلوب: ${required_date || 'غير محدد'}\nالميزانية التقريبية: ${estimated_budget || 'غير محدد'}`;
@@ -913,10 +913,10 @@ app.get('/api/settings/public', async (req, res) => {
         res.json({
             success: true,
             settings: {
-                whatsapp_number: settings.whatsapp_number || '+962790000000',
+                whatsapp_number: settings.whatsapp_number || '+962791413321',
                 site_name: settings.site_name || 'خدماتك الرقمية',
                 site_tagline: settings.site_tagline || '',
-                contact_email: settings.contact_email || 'info@khadamatak.com',
+                contact_email: settings.contact_email || 'aisaralbsomea@gmail.com',
                 instagram_url: settings.instagram_url || '#',
                 telegram_url: settings.telegram_url || '#',
                 currency: settings.currency || 'دينار أردني'
