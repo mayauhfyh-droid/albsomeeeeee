@@ -119,9 +119,9 @@ async function testMailConnection() {
         
         // إرسال رسالة تجريبية
         const info = await transporter.sendMail({
-            from: `"خدماتك الرقمية" <${config.gmailUser}>`,
+            from: `"البسومي لخدمات الويب" <${config.gmailUser}>`,
             to: config.notifEmail || config.gmailUser,
-            subject: '🎉 نجاح ربط إشعارات Gmail مع موقع خدماتك الرقمية',
+            subject: '🎉 نجاح ربط إشعارات Gmail مع موقع البسومي لخدمات الويب',
             html: `
                 <div dir="rtl" style="font-family: sans-serif; padding: 20px; background: #f8fafc; color: #1e293b;">
                     <div style="max-width: 500px; margin: auto; background: #ffffff; padding: 25px; border-radius: 10px; border: 1px solid #e2e8f0;">
@@ -162,7 +162,7 @@ async function testMailConnection() {
 async function sendNewOrderEmail(order, uploadedFile = null) {
     const { transporter, config } = await createTransporter();
     const recipientEmail = config.notifEmail || config.gmailUser || 'info@khadamatak.com';
-    const siteName = process.env.SITE_NAME || 'خدماتك الرقمية';
+    const siteName = process.env.SITE_NAME || 'البسومي لخدمات الويب';
     const cleanPhone = (order.customer_phone || '').replace(/[^0-9]/g, '');
     const whatsappUrl = `https://wa.me/${cleanPhone}`;
     const orderDate = new Date().toLocaleString('ar-JO', {
@@ -333,7 +333,7 @@ async function sendNewOrderEmail(order, uploadedFile = null) {
 async function sendContactMessageEmail(msg) {
     const { transporter, config } = await createTransporter();
     const recipientEmail = config.notifEmail || config.gmailUser || 'info@khadamatak.com';
-    const siteName = process.env.SITE_NAME || 'خدماتك الرقمية';
+    const siteName = process.env.SITE_NAME || 'البسومي لخدمات الويب';
     const cleanPhone = (msg.phone || '').replace(/[^0-9]/g, '');
     const whatsappUrl = `https://wa.me/${cleanPhone}`;
 

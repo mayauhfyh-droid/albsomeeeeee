@@ -16,7 +16,7 @@
     "graduation",
     "ecommerce"
   ],
-  "author": "خدماتك الرقمية",
+  "author": "البسومي لخدمات الويب",
   "license": "ISC",
   "dependencies": {
     "bcryptjs": "^3.0.3",

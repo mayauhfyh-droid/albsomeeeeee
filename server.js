@@ -444,7 +444,7 @@ app.post('/api/orders', formRateLimiter, upload.single('attachment'), async (req
         const whatsappNumber = settingRow ? settingRow.value.replace(/[^0-9]/g, '') : '962791413321';
 
         // توليد رسالة الواتساب العربية المنسقة تلقائياً
-        const messageText = `مرحبًا، أريد طلب خدمة من خدماتك الرقمية.\n\nالخدمة: ${service_name || 'خدمة مخصصة'}\nالاسم: ${customer_name}\nرقم الهاتف: ${customer_phone}\nرقم الطلب المرجعي: ${orderNumber}\n\nتفاصيل المشروع:\n${project_details}\n\nالموعد المطلوب: ${required_date || 'غير محدد'}\nالميزانية التقريبية: ${estimated_budget || 'غير محدد'}`;
+        const messageText = `مرحبًا، أريد طلب خدمة من البسومي لخدمات الويب.\n\nالخدمة: ${service_name || 'خدمة مخصصة'}\nالاسم: ${customer_name}\nرقم الهاتف: ${customer_phone}\nرقم الطلب المرجعي: ${orderNumber}\n\nتفاصيل المشروع:\n${project_details}\n\nالموعد المطلوب: ${required_date || 'غير محدد'}\nالميزانية التقريبية: ${estimated_budget || 'غير محدد'}`;
         const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(messageText)}`;
 
         // إرسال إشعار فوري إلى صندوق البريد (Gmail) مع كافة البيانات والمرفقات ورقم الطلب
@@ -914,7 +914,7 @@ app.get('/api/settings/public', async (req, res) => {
             success: true,
             settings: {
                 whatsapp_number: settings.whatsapp_number || '+962791413321',
-                site_name: settings.site_name || 'خدماتك الرقمية',
+                site_name: settings.site_name || 'البسومي لخدمات الويب',
                 site_tagline: settings.site_tagline || '',
                 contact_email: settings.contact_email || 'aisaralbsomea@gmail.com',
                 instagram_url: settings.instagram_url || '#',
@@ -1009,7 +1009,7 @@ app.use((req, res) => {
 // تشغيل الخادم
 app.listen(PORT, () => {
     console.log(`====================================================`);
-    console.log(`🚀 خادم منصة "خدماتك الرقمية" يعمل بنجاح!`);
+    console.log(`🚀 خادم منصة "البسومي لخدمات الويب" يعمل بنجاح!`);
     console.log(`🌐 الموقع الرئيسي: http://localhost:${PORT}`);
     console.log(`🔐 المسار السري للإدارة: http://localhost:${PORT}${ADMIN_PATH}`);
     console.log(`🗺️ خريطة الموقع: http://localhost:${PORT}/sitemap.xml`);

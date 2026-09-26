@@ -1,4 +1,4 @@
-// منطق الواجهة الأمامية لمنصة خدماتك الرقمية
+// منطق الواجهة الأمامية لمنصة البسومي لخدمات الويب
 function bootstrapApp() {
     initSettings();
     initNavigation();
@@ -15,7 +15,7 @@ if (document.readyState === 'loading') {
 
 let globalSettings = {
     whatsapp_number: '+962791413321',
-    site_name: 'خدماتك الرقمية'
+    site_name: 'البسومي لخدمات الويب'
 };
 
 // 1. جلب إعدادات الموقع وتحديث روابط الواتساب ديناميكياً
@@ -37,7 +37,7 @@ async function initSettings() {
 function updateWhatsAppLinks(phone) {
     if (!phone) return;
     const cleanPhone = phone.replace(/[^0-9]/g, '');
-    const defaultMsg = encodeURIComponent('مرحبًا، أود الاستفسار عن خدمات التصميم والبرمجة من منصة خدماتك الرقمية.');
+    const defaultMsg = encodeURIComponent('مرحبًا، أود الاستفسار عن خدمات التصميم والبرمجة من منصة البسومي لخدمات الويب.');
     const whatsappUrl = `https://wa.me/${cleanPhone}?text=${defaultMsg}`;
 
     // تحديث جميع أزرار الواتساب في الموقع
@@ -79,7 +79,7 @@ function initNavigation() {
         drawer.innerHTML = `
             <div class="mobile-drawer-header">
                 <a href="/" class="drawer-brand">
-                    <span>خدماتك الرقمية</span>
+                    <span>البسومي لخدمات الويب</span>
                     <span class="brand-dot"></span>
                 </a>
                 <button id="mobile-drawer-close" class="mobile-drawer-close" aria-label="إغلاق القائمة">
